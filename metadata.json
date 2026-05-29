@@ -1,0 +1,6 @@
+{
+  "name": "Unblocked Games",
+  "description": "A clean, modern, and unblocked web games portal playing curated classic html5 games directly in embedded frame views.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
