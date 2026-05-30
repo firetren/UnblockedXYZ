@@ -240,6 +240,7 @@ function setupEventListeners() {
 
   // Codebase Sync Modal listeners
   const triggerSyncBtn = document.getElementById('trigger-sync-modal');
+  const triggerResetAllBtn = document.getElementById('trigger-reset-all');
   const closeSyncBtn = document.getElementById('close-sync-modal-btn');
   const cancelSyncBtn = document.getElementById('sync-close-cancel-btn');
   const copySyncBtn = document.getElementById('copy-sync-json-btn');
@@ -248,6 +249,18 @@ function setupEventListeners() {
     triggerSyncBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       openSyncCodebaseModal();
+    });
+  }
+  if (triggerResetAllBtn) {
+    triggerResetAllBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (confirm('Are you sure you want to reset all customized thumbnails, custom games, and favorites back to defaults? This will clear any outdated browser overrides.')) {
+        localStorage.removeItem(CUSTOM_STORAGE_KEY);
+        localStorage.removeItem(FAV_STORAGE_KEY);
+        localStorage.removeItem(RECENT_STORAGE_KEY);
+        localStorage.removeItem(THUMBNAILS_STORAGE_KEY);
+        window.location.reload();
+      }
     });
   }
   if (closeSyncBtn) closeSyncBtn.addEventListener('click', closeSyncCodebaseModal);
