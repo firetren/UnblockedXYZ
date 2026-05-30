@@ -960,6 +960,16 @@ function setupArenaView(game) {
   document.getElementById('arena-game-instructions').textContent = game.instructions || 'Click inside the frame, then use standard mouse controls or keyboard arrows to steer.';
   document.getElementById('arena-game-credits-name').textContent = game.credits || 'Independent Open-Source Developer';
 
+  // Adjust progress warning text for Smash Karts vs generic games
+  const warningBox = document.getElementById('arena-saves-warning-box');
+  if (warningBox) {
+    if (game.id === 'smash-karts') {
+      warningBox.classList.add('hidden');
+    } else {
+      warningBox.classList.remove('hidden');
+    }
+  }
+
   // Toggle user badge in play modal
   const arenaUserBadge = document.getElementById('arena-game-user-badge');
   if (arenaUserBadge) {
@@ -973,8 +983,13 @@ function setupArenaView(game) {
   // Active Icon badge
   const iconContainer = document.getElementById('arena-game-icon-container');
   if (iconContainer) {
-    iconContainer.className = `p-2 rounded-lg bg-gradient-to-br ${gradientColor} text-white shadow-md`;
-    iconContainer.innerHTML = getIconSVG(game.icon, 'w-5 h-5');
+    if (game.id === 'smash-karts') {
+      iconContainer.className = `w-10 h-10 rounded-lg overflow-hidden border border-slate-700 shadow-md shrink-0`;
+      iconContainer.innerHTML = `<img src="https://i.ibb.co/qLydHLys/smashkarts-thumb-2.png" alt="${game.title}" class="w-full h-full object-cover" referrerpolicy="no-referrer" />`;
+    } else {
+      iconContainer.className = `p-2 rounded-lg bg-gradient-to-br ${gradientColor} text-white shadow-md`;
+      iconContainer.innerHTML = getIconSVG(game.icon, 'w-5 h-5');
+    }
   }
 
   // Setup Favorite btn color state
@@ -1003,12 +1018,33 @@ function setupArenaView(game) {
   if (iframeContainer) {
     const cleanedUrl = cleanGameUrl(game.iframeUrl);
     const isCrazyGame = cleanedUrl.includes('crazygames.com');
+    const isSmashKarts = game.id === 'smash-karts';
 
     if (isCrazyGame) {
       iframeContainer.className = "w-full h-full relative overflow-hidden";
     } else {
       iframeContainer.className = "w-full h-full";
     }
+
+    const splashWarningHTML = isSmashKarts ? `
+        <!-- Custom Smash Karts account save warning card block -->
+        <div class="mt-8 max-w-xs bg-rose-950/40 border border-rose-500/20 backdrop-blur-md rounded-2xl p-4 flex items-start gap-3 text-left">
+          <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <div class="text-[11px] text-rose-200 leading-relaxed font-sans">
+            <span class="font-bold text-rose-300 block mb-0.5 text-xs">⚠️ unblockedxyz Accounts Do Not Save Progress</span>
+            Your unblockedxyz portal account will NOT save your progress. To save your levels and stats, you must register or log in to a personal account directly inside the Smash Karts game client.
+          </div>
+        </div>
+    ` : `
+        <!-- Account progress save warning card block -->
+        <div class="mt-8 max-w-xs bg-rose-950/40 border border-rose-500/20 backdrop-blur-md rounded-2xl p-4 flex items-start gap-3 text-left">
+          <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <div class="text-[11px] text-rose-200 leading-relaxed font-sans">
+            <span class="font-bold text-rose-300 block mb-0.5 text-xs">⚠️ Progress is NOT saved</span>
+            Active game saves, level progression, and local achievements are preserved in your temporary browser cache only and will not persist to your cloud account.
+          </div>
+        </div>
+    `;
 
     iframeContainer.innerHTML = `
       <!-- Loading indicator -->
@@ -1022,14 +1058,7 @@ function setupArenaView(game) {
           <div class="w-full h-full bg-gradient-to-r ${gradientColor} origin-left animate-pulse"></div>
         </div>
         
-        <!-- Account progress save warning card block -->
-        <div class="mt-8 max-w-xs bg-rose-950/40 border border-rose-500/20 backdrop-blur-md rounded-2xl p-4 flex items-start gap-3 text-left">
-          <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-          <div class="text-[11px] text-rose-200 leading-relaxed">
-            <span class="font-bold text-rose-300 block mb-0.5 text-xs">⚠️ Progress is NOT saved</span>
-            Active game saves, level progression, and local achievements are preserved in your temporary browser cache only and will not persist to your cloud account.
-          </div>
-        </div>
+        ${splashWarningHTML}
       </div>
 
       <!-- Iframe -->

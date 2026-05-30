@@ -148,20 +148,12 @@
               <div id="play-arena-frame-viewport-container" class="w-full h-full"></div>
             </div>
             
-            <div class="flex flex-col sm:flex-row gap-4">
-              <div class="flex-1 flex items-start gap-3 bg-rose-950/20 border border-rose-500/15 rounded-2xl p-4 text-xs text-rose-350">
+            <div id="arena-saves-warning-box" class="hidden">
+              <div class="flex items-start gap-3 bg-rose-950/20 border border-rose-500/15 rounded-2xl p-4 text-xs text-rose-350">
                 <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                 <div>
                   <h4 class="font-bold text-sm text-rose-400 mb-0.5">⚠️ No Account Cloud Saves</h4>
                   <p class="leading-relaxed text-rose-200">Because games run in an isolated browser sandbox, <strong>progress, custom levels, and high scores are NOT saved to your account database</strong>. Refreshing or exiting the game resets your session.</p>
-                </div>
-              </div>
-              
-              <div class="flex items-center gap-3 bg-orange-950/15 border border-orange-500/10 rounded-2xl p-4 text-xs text-orange-200 sm:max-w-xs shrink-0 h-fit">
-                <svg class="w-5 h-5 text-orange-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
-                <div>
-                  <h4 class="font-bold text-orange-300">Needs input focus?</h4>
-                  <p class="text-[11px] text-slate-300 mt-0.5">Click directly inside the game container to capture keyboard & mouse controls.</p>
                 </div>
               </div>
             </div>
@@ -187,10 +179,7 @@
                   <span class="text-slate-400">Credits/Authors</span>
                   <span id="arena-game-credits-name" class="text-slate-200 font-bold"></span>
                 </div>
-                <div class="flex items-start gap-3 border-t border-slate-700/50 pt-3 text-xs text-rose-300">
-                  <svg class="w-4 h-4 text-orange-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
-                  <p>This simulation is secured inside sandbox browser restrictions. Saves remain within your local browser cache properties.</p>
-                </div>
+
               </div>
             </div>
           </div>
@@ -735,11 +724,7 @@
           if (passInput) passInput.value = "";
           window.xyzCloseModal();
         } catch (e) {
-          if (e.message === "USERNAME_TAKEN") {
-  xyzErr("That username is already taken. Please choose another.");
-} else {
-  xyzErr(friendlyError(e.code || e.message));
-}
+          xyzErr(friendlyError(e.code || e.message));
         }
       };
 
@@ -932,236 +917,5 @@
     <script>
       lucide.createIcons();
     </script>
- <!-- ============================================================
-     ADMIN PANEL — UnblockedXYZ
-     Paste this entire block just before </body> in your index.html
-     ============================================================ -->
-
-<!-- Lockdown Overlay (shown to all users when site is locked) -->
-<div id="lockdown-screen" class="hidden fixed inset-0 z-[99999] flex flex-col items-center justify-center" style="background:#0a0a0f;">
-  <div style="text-align:center;padding:2rem;max-width:420px;">
-    <div style="width:72px;height:72px;margin:0 auto 1.5rem;border-radius:50%;background:linear-gradient(135deg,#ff4400,#ff0044);display:flex;align-items:center;justify-content:center;">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-    </div>
-    <h1 style="font-family:'Courier New',monospace;font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:0.1em;margin-bottom:0.5rem;">SITE OFFLINE</h1>
-    <p style="font-family:'Courier New',monospace;font-size:0.8rem;color:#666;letter-spacing:0.05em;line-height:1.6;">Under maintenance. Check back later.</p>
-    <div style="margin-top:2rem;width:48px;height:2px;background:linear-gradient(90deg,#ff4400,#ff0044);margin-left:auto;margin-right:auto;"></div>
-  </div>
-</div>
-
-<!-- Admin Panel Modal -->
-<div id="admin-panel" class="hidden fixed inset-0 z-[99998] flex items-center justify-center" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">
-  <div style="background:#0f0f17;border:1px solid #2a2a3a;border-radius:16px;padding:2rem;width:320px;position:relative;">
-    
-    <!-- Header -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;">
-      <div style="width:8px;height:8px;border-radius:50%;background:#ff4400;box-shadow:0 0 8px #ff4400;"></div>
-      <span style="font-family:'Courier New',monospace;font-size:0.7rem;color:#666;letter-spacing:0.15em;text-transform:uppercase;">Admin Terminal</span>
-      <button onclick="closeAdminPanel()" style="margin-left:auto;background:none;border:none;color:#444;cursor:pointer;font-size:1.2rem;line-height:1;">×</button>
-    </div>
-
-    <!-- Status indicator -->
-    <div id="admin-status-bar" style="background:#1a1a2a;border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:8px;">
-      <div id="admin-status-dot" style="width:6px;height:6px;border-radius:50%;background:#00ff88;"></div>
-      <span id="admin-status-text" style="font-family:'Courier New',monospace;font-size:0.7rem;color:#888;letter-spacing:0.1em;">SITE ONLINE</span>
-    </div>
-
-    <!-- Code display -->
-    <div style="margin-bottom:1rem;">
-      <div style="font-family:'Courier New',monospace;font-size:0.65rem;color:#555;letter-spacing:0.1em;margin-bottom:0.4rem;">ENTER 6-DIGIT CODE</div>
-      <div id="admin-code-display" style="font-family:'Courier New',monospace;font-size:2rem;font-weight:900;color:#fff;letter-spacing:0.3em;background:#1a1a2a;border-radius:8px;padding:0.8rem;text-align:center;min-height:3.5rem;border:1px solid #2a2a3a;">
-        ——————
-      </div>
-      <div id="admin-code-error" style="font-family:'Courier New',monospace;font-size:0.65rem;color:#ff4444;margin-top:0.4rem;min-height:1rem;text-align:center;"></div>
-    </div>
-
-    <!-- Number pad -->
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem;">
-      <button class="admin-key" onclick="adminKeyPress('1')">1</button>
-      <button class="admin-key" onclick="adminKeyPress('2')">2</button>
-      <button class="admin-key" onclick="adminKeyPress('3')">3</button>
-      <button class="admin-key" onclick="adminKeyPress('4')">4</button>
-      <button class="admin-key" onclick="adminKeyPress('5')">5</button>
-      <button class="admin-key" onclick="adminKeyPress('6')">6</button>
-      <button class="admin-key" onclick="adminKeyPress('7')">7</button>
-      <button class="admin-key" onclick="adminKeyPress('8')">8</button>
-      <button class="admin-key" onclick="adminKeyPress('9')">9</button>
-      <button class="admin-key" onclick="adminKeyDelete()" style="color:#ff6644;">⌫</button>
-      <button class="admin-key" onclick="adminKeyPress('0')">0</button>
-      <button class="admin-key" onclick="adminConfirm()" style="background:linear-gradient(135deg,#ff4400,#ff0044);color:#fff;">✓</button>
-    </div>
-
-    <div style="font-family:'Courier New',monospace;font-size:0.6rem;color:#333;text-align:center;letter-spacing:0.08em;">
-      TYPE "dev!" ANYWHERE TO OPEN
-    </div>
-  </div>
-</div>
-
-<style>
-  .admin-key {
-    background: #1a1a2a;
-    border: 1px solid #2a2a3a;
-    border-radius: 8px;
-    color: #ccc;
-    font-family: 'Courier New', monospace;
-    font-size: 1.1rem;
-    font-weight: 700;
-    padding: 0.8rem;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, transform 0.1s;
-    letter-spacing: 0.05em;
-  }
-  .admin-key:hover { background: #252535; border-color: #3a3a4a; }
-  .admin-key:active { transform: scale(0.94); background: #2a2a3a; }
-</style>
-
-<!-- Plain script: handles all UI logic and keyboard input -->
-<script>
-  var _adminCode = "";
-  var _adminLocked = false;
-  var _adminKeyBuffer = "";
-  var _adminDb = null;
-  var _adminSetDoc = null;
-
-  window.adminKeyPress = function(digit) {
-    if (_adminCode.length >= 6) return;
-    _adminCode += digit;
-    _adminUpdateDisplay();
-  };
-
-  window.adminKeyDelete = function() {
-    _adminCode = _adminCode.slice(0, -1);
-    _adminUpdateDisplay();
-    _adminClearError();
-  };
-
-  window.adminConfirm = async function() {
-    if (_adminCode.length < 6) { _adminShowError("Enter full 6-digit code"); return; }
-    if (!_adminDb) { _adminShowError("Not connected"); return; }
-
-    var LOCK   = window._ADMIN_LOCK_CODE;
-    var UNLOCK = window._ADMIN_UNLOCK_CODE;
-
-    if (_adminCode === LOCK && !_adminLocked) {
-      await _adminSetDoc(_adminDb, { locked: true });
-      _adminCode = ""; _adminUpdateDisplay();
-    } else if (_adminCode === UNLOCK && _adminLocked) {
-      await _adminSetDoc(_adminDb, { locked: false });
-      _adminCode = ""; _adminUpdateDisplay();
-    } else {
-      _adminShowError("Invalid code");
-      _adminCode = ""; _adminUpdateDisplay();
-    }
-  };
-
-  window.toggleAdminPanel = function() {
-    var panel = document.getElementById("admin-panel");
-    panel.classList.toggle("hidden");
-    if (!panel.classList.contains("hidden")) {
-      _adminCode = ""; _adminUpdateDisplay(); _adminClearError();
-    }
-  };
-
-  window.closeAdminPanel = function() {
-    document.getElementById("admin-panel").classList.add("hidden");
-  };
-
-  function _adminUpdateDisplay() {
-    var display = document.getElementById("admin-code-display");
-    var filled  = _adminCode.split("").map(function() { return "●"; }).join(" ");
-    var empty   = Array(6 - _adminCode.length).fill("—").join(" ");
-    display.textContent = filled + (filled && empty ? " " : "") + empty;
-  }
-
-  function _adminShowError(msg) {
-    document.getElementById("admin-code-error").textContent = msg;
-    setTimeout(_adminClearError, 2000);
-  }
-
-  function _adminClearError() {
-    document.getElementById("admin-code-error").textContent = "";
-  }
-
-  // Close on backdrop click
-  document.getElementById("admin-panel").addEventListener("click", function(e) {
-    if (e.target === document.getElementById("admin-panel")) closeAdminPanel();
-  });
-
-  // Keyboard listener — plain script so it works reliably
-  document.addEventListener("keydown", function(e) {
-    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-
-    var panel = document.getElementById("admin-panel");
-    var panelOpen = panel && !panel.classList.contains("hidden");
-
-    if (panelOpen) {
-      if (e.key >= "0" && e.key <= "9") { adminKeyPress(e.key); return; }
-      if (e.key === "Backspace")         { adminKeyDelete(); return; }
-      if (e.key === "Enter")             { adminConfirm(); return; }
-      if (e.key === "Escape")            { closeAdminPanel(); return; }
-    }
-
-    _adminKeyBuffer += e.key;
-    if (_adminKeyBuffer.length > 4) _adminKeyBuffer = _adminKeyBuffer.slice(-4);
-    if (_adminKeyBuffer === "dev!") {
-      _adminKeyBuffer = "";
-      toggleAdminPanel();
-    }
-  });
-</script>
-
-<!-- Module script: handles Firebase only -->
-<script type="module">
-  import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  // ── CHANGE THESE TO YOUR SECRET CODES ──
-  window._ADMIN_LOCK_CODE   = "978517";
-  window._ADMIN_UNLOCK_CODE = "123456";
-  // ────────────────────────────────────────
-
-  async function bootFirebase() {
-    try {
-      const response = await fetch('/UnblockedXYZ/firebase-applet-config.json');
-      const config   = await response.json();
-      const app      = getApps().length ? getApps()[0] : initializeApp(config, "admin");
-      const db       = getFirestore(app);
-      const lockRef  = doc(db, "admin", "lockdown");
-
-      // Expose setDoc to plain script
-      window._adminDb = db;
-      window._adminSetDoc = async function(database, data) {
-        await setDoc(lockRef, data);
-      };
-
-      // Listen for lock state changes in real time
-      onSnapshot(lockRef, (snap) => {
-        const locked = snap.exists() ? snap.data().locked === true : false;
-        window._adminLocked = locked;
-
-        const screen = document.getElementById("lockdown-screen");
-        const dot    = document.getElementById("admin-status-dot");
-        const text   = document.getElementById("admin-status-text");
-
-        if (locked) {
-          screen.classList.remove("hidden");
-          dot.style.background = "#ff4400";
-          dot.style.boxShadow  = "0 0 8px #ff4400";
-          text.textContent     = "SITE OFFLINE";
-          text.style.color     = "#ff6644";
-        } else {
-          screen.classList.add("hidden");
-          dot.style.background = "#00ff88";
-          dot.style.boxShadow  = "0 0 8px #00ff88";
-          text.textContent     = "SITE ONLINE";
-          text.style.color     = "#00cc66";
-        }
-      });
-    } catch (e) {
-      console.warn("Admin: Firebase not available", e);
-    }
-  }
-
-  bootFirebase();
-</script> </body>
+  </body>
 </html>

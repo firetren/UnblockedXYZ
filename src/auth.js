@@ -17,7 +17,6 @@ import {
   updateDoc,
   serverTimestamp,
   getDocFromServer,
-  deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // Firestore operation types
@@ -66,17 +65,10 @@ export function initials(name) {
   return name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2);
 }
 
-// Check if a username is already taken
-export async function isUsernameTaken(username) {
-  if (!isConfigured) return false;
-  const snap = await getDoc(doc(db, "usernames", username.toLowerCase()));
-  return snap.exists();
-}
-
 // Dynamics initializer
 export async function setupFirebase() {
   try {
-    const response = await fetch('/UnblockedXYZ/firebase-applet-config.json');
+    const response = await fetch('/firebase-applet-config.json');
     const firebaseConfig = await response.json();
 
     if (!firebaseConfig || firebaseConfig.apiKey === "PLACEHOLDER_API_KEY") {
@@ -89,7 +81,7 @@ export async function setupFirebase() {
     db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
     isConfigured = true;
 
-    // Test connection
+    // Test connection as requested in skill Guidelines (Phase 1 Validation)
     try {
       await getDocFromServer(doc(db, 'test', 'connection'));
     } catch (err) {
@@ -111,23 +103,15 @@ export async function setupFirebase() {
   }
 }
 
-// Authentication APIs
+// Authentication APIs matching Claude's interface
 export async function registerUser(username, email, password) {
   if (!isConfigured) throw new Error("Firebase account system is in pending configuration.");
-
-  // Check for duplicate username
-  const taken = await isUsernameTaken(username);
-  if (taken) throw new Error("USERNAME_TAKEN");
-
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: username });
-
+    
     const userDocRef = doc(db, "users", cred.user.uid);
-    const usernameDocRef = doc(db, "usernames", username.toLowerCase());
-
     try {
-      // Save user profile
       await setDoc(userDocRef, {
         username,
         email,
@@ -135,8 +119,6 @@ export async function registerUser(username, email, password) {
         createdAt: serverTimestamp(),
         gamesPlayed: 0,
       });
-      // Reserve the username
-      await setDoc(usernameDocRef, { uid: cred.user.uid });
     } catch (err) {
       handleFirestoreError(err, OperationType.WRITE, `users/${cred.user.uid}`, cred.user);
     }
@@ -156,26 +138,24 @@ export async function loginUserWithGoogle() {
   if (!isConfigured) throw new Error("Firebase account system is in pending configuration.");
   const provider = new GoogleAuthProvider();
   const cred = await signInWithPopup(auth, provider);
-
+  
+  // Create user document if it does not exist yet
   const userDocRef = doc(db, "users", cred.user.uid);
   try {
     const profile = await getDoc(userDocRef);
     if (!profile.exists()) {
-      const username = cred.user.displayName || "Gamer";
       await setDoc(userDocRef, {
-        username,
+        username: cred.user.displayName || "Gamer",
         email: cred.user.email,
         avatarColor: pickColor(cred.user.uid),
         createdAt: serverTimestamp(),
         gamesPlayed: 0,
       });
-      // Reserve username for Google users too
-      await setDoc(doc(db, "usernames", username.toLowerCase()), { uid: cred.user.uid });
     }
   } catch (err) {
     handleFirestoreError(err, OperationType.WRITE, `users/${cred.user.uid}`, cred.user);
   }
-
+  
   return cred.user;
 }
 
@@ -198,23 +178,9 @@ export async function getUserProfile(uid) {
 
 export async function updateUsername(uid, newUsername) {
   if (!isConfigured) return;
-
-  // Check if new username is taken
-  const taken = await isUsernameTaken(newUsername);
-  if (taken) throw new Error("USERNAME_TAKEN");
-
   const userDocRef = doc(db, "users", uid);
   try {
-    // Get old username to free it up
-    const snap = await getDoc(userDocRef);
-    if (snap.exists()) {
-      const oldUsername = snap.data().username;
-      // Delete old username reservation
-      await deleteDoc(doc(db, "usernames", oldUsername.toLowerCase()));
-    }
-    // Update user doc and reserve new username
     await updateDoc(userDocRef, { username: newUsername });
-    await setDoc(doc(db, "usernames", newUsername.toLowerCase()), { uid });
     if (auth.currentUser) {
       await updateProfile(auth.currentUser, { displayName: newUsername });
     }
@@ -239,6 +205,7 @@ export async function incrementGamesPlayed(uid) {
 
 export function onUserChanged(callback) {
   if (!auth) {
+    // Return unsubscribe void mock if not configured yet
     return () => {};
   }
   return onAuthStateChanged(auth, callback);
