@@ -7,6 +7,7 @@
 const CUSTOM_STORAGE_KEY = 'unblocked_custom_games';
 const FAV_STORAGE_KEY = 'unblocked_favorites';
 const RECENT_STORAGE_KEY = 'unblocked_recent_plays';
+const THUMBNAILS_STORAGE_KEY = 'unblocked_custom_thumbnails';
 
 // Core State variables
 let gamesData = [];
@@ -15,6 +16,85 @@ let recentPlays = [];
 let currentCategory = 'All';
 let searchQuery = '';
 let selectedGame = null;
+let editingGameForThumbnail = null;
+
+/**
+ * Normalizes input raw URLs or copy-pasted iframe code.
+ * Converts hotlinked CrazyGames CDN URLs into the clean official player.
+ */
+function cleanGameUrl(url) {
+  if (!url) return '';
+  let clean = url.trim();
+
+  // If the user pasted an iframe HTML tag, extract the src attribute
+  if (clean.includes('<iframe') && clean.includes('src=')) {
+    const srcMatch = clean.match(/src="([^"]+)"/) || clean.match(/src='([^']+)'/);
+    if (srcMatch && srcMatch[1]) {
+      clean = srcMatch[1];
+    }
+  }
+
+  // Swap HTML entity &amp; to standard & character
+  clean = clean.replace(/&amp;/g, '&');
+
+  // Handle CrazyGames direct CDN or site pages
+  if (clean.includes('crazygames.com')) {
+    // CDN pattern: subdomain.game-files.crazygames.com
+    const cdnMatch = clean.match(/https?:\/\/([^.]+)\.game-files\.crazygames\.com/);
+    if (cdnMatch && cdnMatch[1]) {
+      return `https://www.crazygames.com/embed/${cdnMatch[1]}`;
+    }
+
+    // Locale game frame pattern: games.crazygames.com/en_US/slug/index.html or similar
+    const localizedMatch = clean.match(/https?:\/\/games\.crazygames\.com\/[a-z]{2}_[A-Z]{2}\/([^/]+)\/index\.html/);
+    if (localizedMatch && localizedMatch[1]) {
+      return `https://www.crazygames.com/embed/${localizedMatch[1]}`;
+    }
+
+    // Direct game folders pattern on games.crazygames.com
+    const directGamesMatch = clean.match(/games\.crazygames\.com\/[^/]+\/([^/]+)/);
+    if (directGamesMatch && directGamesMatch[1] && !directGamesMatch[1].endsWith('.html')) {
+      return `https://www.crazygames.com/embed/${directGamesMatch[1]}`;
+    }
+
+    // Standard game page pattern: crazygames.com/game/slug
+    const pageMatch = clean.match(/crazygames\.com\/game\/([^/?#&]+)/);
+    if (pageMatch && pageMatch[1]) {
+      return `https://www.crazygames.com/embed/${pageMatch[1]}`;
+    }
+
+    // Direct embed pattern check (clean-up other params if needed)
+    const embedMatch = clean.match(/crazygames\.com\/embed\/([^/?#&]+)/);
+    if (embedMatch && embedMatch[1]) {
+      return `https://www.crazygames.com/embed/${embedMatch[1]}`;
+    }
+  }
+
+  return clean;
+}
+
+/**
+ * Apply saved custom thumbnail overrides from localStorage to gamesData
+ */
+function applyCustomThumbnails() {
+  let customThumbnails = {};
+  try {
+    customThumbnails = JSON.parse(localStorage.getItem(THUMBNAILS_STORAGE_KEY)) || {};
+  } catch (e) {
+    customThumbnails = {};
+  }
+  
+  gamesData = gamesData.map(game => {
+    if (customThumbnails[game.id] !== undefined) {
+      const override = customThumbnails[game.id];
+      if (override && typeof override === 'object') {
+        return { ...game, thumbnailUrl: override.url, thumbnailFit: override.fit || 'cover' };
+      }
+      return { ...game, thumbnailUrl: override, thumbnailFit: 'cover' };
+    }
+    return game;
+  });
+}
 
 // Initialize app when DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,44 +131,18 @@ async function initApp() {
 
     gamesData = [...defaultGames, ...customGames];
   } catch (err) {
-    console.error('Failed to load games database, using fallback', err);
-    // Hardcoded fallback in case of direct file protocol constraints
-    gamesData = [
-      {
-        "id": "2048",
-        "title": "2048",
-        "description": "The viral slide-puzzle game about combining tiles with matching numbers to reach the legendary 2048 tile.",
-        "iframeUrl": "https://gabrielecirulli.github.io/2048/",
-        "category": "Puzzle",
-        "icon": "Grid3X3",
-        "instructions": "Use your arrow keys or swipe to move the tiles. When two tiles with the same number touch, they merge into one!",
-        "credits": "Created by Gabriele Cirulli",
-        "color": "from-amber-400 to-orange-500"
-      },
-      {
-        "id": "clumsy-bird",
-        "title": "Clumsy Bird",
-        "description": "A beautiful, lightweight open-source clone of Flappy Bird. Flap your wings, avoid the obstacles, and get the high score.",
-        "iframeUrl": "https://ellisonleao.github.io/clumsy-bird/",
-        "category": "Skill",
-        "icon": "Bird",
-        "instructions": "Click, tap, or press Spacebar to flap your wings and fly. Guide the bird safely through the gaps between the pipes.",
-        "credits": "Created by Ellison Leão",
-        "color": "from-teal-400 to-emerald-500"
-      },
-      {
-        "id": "html5-snake",
-        "title": "Retro Snake",
-        "description": "The absolute classic arcade game. Steer the snake, eat the food nuggets, and grow longer without crashing into the walls or yourself.",
-        "iframeUrl": "https://code-boxer.github.io/snake/",
-        "category": "Retro",
-        "icon": "TrendingUp",
-        "instructions": "Use Arrow keys to instantly control the direction of the snake. Collect the foods to grow and gain points.",
-        "credits": "Created by Code-Boxer",
-        "color": "from-green-400 to-emerald-600"
-      }
-    ];
+    console.error('Failed to load games database, using custom repository fallback', err);
+    let customGames = [];
+    try {
+      customGames = JSON.parse(localStorage.getItem(CUSTOM_STORAGE_KEY)) || [];
+    } catch (e) {
+      customGames = [];
+    }
+    gamesData = [...customGames];
   }
+
+  // Apply custom thumbnails overrides
+  applyCustomThumbnails();
 
   // Setup Static DOM UI listeners
   setupEventListeners();
@@ -128,10 +182,10 @@ function setupEventListeners() {
         
         // Update selection styling
         tabContainer.querySelectorAll('[data-category]').forEach(btn => {
-          btn.classList.remove('text-indigo-400', 'border-indigo-500', 'font-black');
+          btn.classList.remove('text-orange-400', 'border-orange-500', 'font-black');
           btn.classList.add('text-slate-400', 'border-transparent');
         });
-        button.classList.add('text-indigo-400', 'border-indigo-500', 'font-black');
+        button.classList.add('text-orange-400', 'border-orange-500', 'font-black');
         button.classList.remove('text-slate-400', 'border-transparent');
 
         renderActiveGrid();
@@ -178,12 +232,113 @@ function setupEventListeners() {
     });
   }
 
-  // Embedded banner quick play load button
-  const load2048Btn = document.getElementById('bento-load-2048-btn');
-  if (load2048Btn) {
-    load2048Btn.addEventListener('click', () => {
-      const match = gamesData.find(g => g.id === '2048');
-      if (match) launchGame(match);
+  // Edit Thumbnail Modal listeners
+  const closeEditBtn = document.getElementById('close-edit-thumbnail-modal-btn');
+  const cancelEditBtn = document.getElementById('edit-thumbnail-cancel-btn');
+  if (closeEditBtn) closeEditBtn.addEventListener('click', closeEditThumbnailModal);
+  if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditThumbnailModal);
+
+  const editThumbnailForm = document.getElementById('edit-thumbnail-form');
+  if (editThumbnailForm) {
+    editThumbnailForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!editingGameForThumbnail) return;
+      
+      const newUrl = document.getElementById('input-edit-thumbnail-url').value.trim();
+      const newFit = document.getElementById('select-edit-thumbnail-fit').value;
+      
+      // Update local storage
+      let customThumbnails = {};
+      try {
+        customThumbnails = JSON.parse(localStorage.getItem(THUMBNAILS_STORAGE_KEY)) || {};
+      } catch (err) {
+        customThumbnails = {};
+      }
+      
+      customThumbnails[editingGameForThumbnail.id] = { url: newUrl, fit: newFit };
+      localStorage.setItem(THUMBNAILS_STORAGE_KEY, JSON.stringify(customThumbnails));
+      
+      // Update in-memory data
+      gamesData = gamesData.map(game => {
+        if (game.id === editingGameForThumbnail.id) {
+          return { ...game, thumbnailUrl: newUrl, thumbnailFit: newFit };
+        }
+        return game;
+      });
+      
+      closeEditThumbnailModal();
+      renderUI();
+      renderActiveGrid();
+    });
+  }
+
+  const editThumbnailInput = document.getElementById('input-edit-thumbnail-url');
+  const editThumbnailFitSelect = document.getElementById('select-edit-thumbnail-fit');
+  
+  function updatePreviewClass(fit) {
+    const previewImg = document.getElementById('edit-thumbnail-preview-img');
+    if (previewImg) {
+      if (fit === 'contain') {
+        previewImg.className = "w-full h-full object-contain p-1 bg-slate-950/95";
+      } else {
+        previewImg.className = "w-full h-full object-cover";
+      }
+    }
+  }
+
+  if (editThumbnailFitSelect) {
+    editThumbnailFitSelect.addEventListener('change', (e) => {
+      updatePreviewClass(e.target.value);
+    });
+  }
+
+  if (editThumbnailInput) {
+    editThumbnailInput.addEventListener('input', (e) => {
+      const url = e.target.value.trim();
+      const previewImg = document.getElementById('edit-thumbnail-preview-img');
+      const previewFallback = document.getElementById('edit-thumbnail-preview-fallback');
+      
+      if (previewImg && previewFallback) {
+        if (url) {
+          previewImg.src = url;
+          previewImg.classList.remove('hidden');
+          previewFallback.classList.add('hidden');
+        } else {
+          previewImg.src = '';
+          previewImg.classList.add('hidden');
+          previewFallback.classList.remove('hidden');
+        }
+      }
+    });
+
+    const previewImg = document.getElementById('edit-thumbnail-preview-img');
+    if (previewImg) {
+      previewImg.addEventListener('error', () => {
+        previewImg.classList.add('hidden');
+        const previewFallback = document.getElementById('edit-thumbnail-preview-fallback');
+        if (previewFallback) previewFallback.classList.remove('hidden');
+      });
+    }
+  }
+
+  const resetEditBtn = document.getElementById('edit-thumbnail-reset-btn');
+  if (resetEditBtn) {
+    resetEditBtn.addEventListener('click', () => {
+      if (!editingGameForThumbnail) return;
+      
+      let customThumbnails = {};
+      try {
+        customThumbnails = JSON.parse(localStorage.getItem(THUMBNAILS_STORAGE_KEY)) || {};
+      } catch (err) {
+        customThumbnails = {};
+      }
+      
+      delete customThumbnails[editingGameForThumbnail.id];
+      localStorage.setItem(THUMBNAILS_STORAGE_KEY, JSON.stringify(customThumbnails));
+      
+      // Re-initialize state to default values and refresh
+      initApp();
+      closeEditThumbnailModal();
     });
   }
 }
@@ -223,6 +378,8 @@ function renderUI() {
 
   // 2. Setup featured game banner detail
   const featuredGame = gamesData.find(g => g.id === 'html5-snake') || gamesData[0];
+  const featuredBg = document.getElementById('featured-game-bg-image');
+  
   if (featuredGame) {
     const featuredCategory = document.getElementById('featured-game-category');
     const featuredTitle = document.getElementById('featured-game-title');
@@ -233,12 +390,68 @@ function renderUI() {
     if (featuredTitle) featuredTitle.textContent = featuredGame.title;
     if (featuredDesc) featuredDesc.textContent = featuredGame.description;
     
+    if (featuredBg) {
+      if (featuredGame.thumbnailUrl) {
+        featuredBg.style.backgroundImage = `url('${featuredGame.thumbnailUrl}')`;
+        featuredBg.style.opacity = '0.35';
+      } else {
+        featuredBg.style.backgroundImage = 'none';
+        featuredBg.style.opacity = '0.05';
+      }
+    }
+    
     if (featuredBtn) {
-      // Re-add listener to play featured game
+      featuredBtn.textContent = "PLAY GAME";
       const newBtn = featuredBtn.cloneNode(true);
       featuredBtn.parentNode.replaceChild(newBtn, featuredBtn);
       newBtn.addEventListener('click', () => launchGame(featuredGame));
     }
+  } else {
+    const featuredCategory = document.getElementById('featured-game-category');
+    const featuredTitle = document.getElementById('featured-game-title');
+    const featuredDesc = document.getElementById('featured-game-desc');
+    const featuredBtn = document.getElementById('featured-play-btn');
+
+    if (featuredCategory) featuredCategory.textContent = "Arcade Empty";
+    if (featuredTitle) featuredTitle.textContent = "Get Started";
+    if (featuredDesc) featuredDesc.textContent = "Your sandbox catalog has no simulations loaded yet. Click 'Import Game' to instantly add any unblocked game URL!";
+    
+    if (featuredBg) {
+      featuredBg.style.backgroundImage = 'none';
+      featuredBg.style.opacity = '0.05';
+    }
+
+    if (featuredBtn) {
+      featuredBtn.textContent = "IMPORT FIRST GAME";
+      const newBtn = featuredBtn.cloneNode(true);
+      featuredBtn.parentNode.replaceChild(newBtn, featuredBtn);
+      newBtn.addEventListener('click', () => openSubmitModal());
+    }
+  }
+
+
+
+  // Handle 2048 quick play dynamic state
+  const load2048Btn = document.getElementById('bento-load-2048-btn');
+  if (load2048Btn) {
+    const newBtn = load2048Btn.cloneNode(true);
+    load2048Btn.parentNode.replaceChild(newBtn, load2048Btn);
+    
+    const has2048 = gamesData.some(g => g.id === '2048');
+    if (has2048) {
+      newBtn.textContent = "LOAD 2048";
+    } else {
+      newBtn.textContent = "IMPORT GAME";
+    }
+
+    newBtn.addEventListener('click', () => {
+      const match = gamesData.find(g => g.id === '2048');
+      if (match) {
+        launchGame(match);
+      } else {
+        openSubmitModal();
+      }
+    });
   }
 
   // 3. Render Recents Tray
@@ -273,7 +486,7 @@ function renderRecentsTray() {
     const el = document.createElement('div');
     el.className = 'flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-850 border border-slate-800 cursor-pointer text-xs font-semibold text-slate-350 hover:text-white transition-all transform hover:translate-y-[-1px]';
     el.innerHTML = `
-      <span class="w-2 h-2 rounded-full bg-gradient-to-r ${game.color || 'from-indigo-500 to-purple-600'}"></span>
+      <span class="w-2 h-2 rounded-full bg-gradient-to-r ${game.color || 'from-amber-500 to-orange-600'}"></span>
       <span>${escapeHTML(game.title)}</span>
     `;
     el.addEventListener('click', () => launchGame(game));
@@ -367,9 +580,9 @@ function renderActiveGrid() {
               tabContainer.querySelectorAll('[data-category]').forEach(btn => {
                 const cat = btn.getAttribute('data-category');
                 if (cat === 'All') {
-                  btn.classList.add('text-indigo-400', 'border-indigo-500', 'font-black');
+                  btn.classList.add('text-orange-400', 'border-orange-500', 'font-black');
                 } else {
-                  btn.classList.remove('text-indigo-400', 'border-indigo-500', 'font-black');
+                  btn.classList.remove('text-orange-400', 'border-orange-500', 'font-black');
                   btn.classList.add('text-slate-400', 'border-transparent');
                 }
               });
@@ -393,75 +606,101 @@ function renderActiveGrid() {
 
   filtered.forEach(game => {
     const isFav = favorites.includes(game.id);
-    const gradientColor = game.color || 'from-indigo-500 to-purple-600';
+    const gradientColor = game.color || 'from-amber-500 to-orange-600';
     const card = document.createElement('div');
     
     card.id = `game-card-${game.id}`;
-    card.className = "group relative cursor-pointer overflow-hidden rounded-2xl bg-slate-800/60 border border-slate-700/50 backdrop-blur-md transition-all duration-300 hover:scale-[1.03] hover:border-slate-500/50 hover:shadow-[0_10px_30px_rgba(0,0,0,0.30)] flex flex-col justify-between h-56";
+    card.className = "group relative cursor-pointer overflow-hidden rounded-2xl bg-slate-900 border border-slate-800 hover:border-orange-500/50 backdrop-blur-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_12px_32px_rgba(0,0,0,0.40)] flex flex-col justify-between h-[300px]";
     
     card.innerHTML = `
-      <!-- Hover dynamic glow overlay -->
-      <div class="absolute inset-0 bg-gradient-to-br ${gradientColor} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-300 pointer-events-none"></div>
+      <!-- Thumbnail/Header Cover Container -->
+      <div class="relative w-full h-40 overflow-hidden bg-slate-950 shrink-0">
+        <!-- Floating Buttons -->
+        <div class="absolute top-2.5 right-2.5 z-10 flex gap-1.5 pointer-events-auto">
+          <button
+            data-action="edit-thumbnail"
+            class="p-1.5 rounded-lg bg-slate-955/80 border border-slate-800 text-slate-400 hover:text-orange-400 backdrop-blur transition-colors hover:bg-slate-900 cursor-pointer"
+            title="Edit Thumbnail"
+          >
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"/>
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+            </svg>
+          </button>
 
-      <!-- Main card action layout -->
-      <div class="p-5 flex-1 flex flex-col">
-        <div class="flex items-start justify-between gap-4">
-          <!-- Card Icon Badge -->
-          <div class="p-3 rounded-xl bg-gradient-to-br ${gradientColor} shadow-lg shadow-black/20 text-white transform group-hover:scale-110 transition-transform duration-300">
-            ${getIconSVG(game.icon, 'w-5 h-5')}
-          </div>
+          <button
+            data-action="toggle-fav"
+            class="p-1.5 rounded-lg bg-slate-950/75 border backdrop-blur transition-colors hover:bg-slate-900 cursor-pointer ${
+              isFav 
+                ? 'text-pink-500 border-pink-500/30' 
+                : 'text-slate-400 border-slate-800 hover:text-white'
+            }"
+            title="${isFav ? 'Remove from Favorites' : 'Add to Favorites'}"
+          >
+            <svg class="w-4 h-4 ${isFav ? 'fill-current' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          </button>
 
-          <!-- Card Button controls -->
-          <div class="flex gap-1.5 z-10">
+          ${game.custom ? `
             <button
-              data-action="toggle-fav"
-              class="p-2 rounded-lg bg-slate-900/60 transition-colors border hover:bg-slate-900 cursor-pointer ${
-                isFav 
-                  ? 'text-pink-500 border-pink-500/30' 
-                  : 'text-slate-400 border-slate-700 hover:text-slate-200'
-              }"
-              title="${isFav ? 'Remove from Favorites' : 'Add to Favorites'}"
+              data-action="delete-custom"
+              class="p-1.5 rounded-lg bg-slate-955/75 text-rose-500 border border-slate-800 hover:bg-rose-950 hover:text-rose-450 transition-colors cursor-pointer"
+              title="Delete custom game"
             >
-              <svg class="w-4 h-4 ${isFav ? 'fill-current' : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
             </button>
-
-            ${game.custom ? `
-              <button
-                data-action="delete-custom"
-                class="p-2 rounded-lg bg-slate-900/60 text-rose-500 border border-rose-500/30 hover:bg-rose-955 transition-colors cursor-pointer"
-                title="Delete custom game"
-              >
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-              </button>
-            ` : ''}
-          </div>
+          ` : ''}
         </div>
+        
+        ${game.thumbnailUrl ? `
+          <img src="${escapeHTML(game.thumbnailUrl)}" alt="${escapeHTML(game.title)}" class="w-full h-full ${game.thumbnailFit === 'contain' ? 'object-contain bg-slate-950/95 p-1' : 'object-cover'} transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br ${gradientColor} opacity-75 hidden">
+            ${getIconSVG(game.icon, 'w-10 h-10 text-white')}
+          </div>
+        ` : `
+          <!-- Fallback to beautiful animated abstract gradient cover -->
+          <div class="w-full h-full bg-gradient-to-br ${gradientColor} opacity-75 flex items-center justify-center relative">
+            <div class="absolute inset-0 bg-slate-950/20"></div>
+            <!-- Centered icon placeholder -->
+            <div class="transform group-hover:scale-110 transition-transform duration-300">
+              ${getIconSVG(game.icon, 'w-10 h-10 text-white drop-shadow-md')}
+            </div>
+          </div>
+        `}
+        <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-slate-900 to-transparent pointer-events-none"></div>
+      </div>
 
-        <div class="mt-4">
+      <!-- Content text block -->
+      <div class="p-4 flex-grow flex flex-col justify-between bg-slate-900/10">
+        <div>
           <div class="flex items-center gap-2">
-            <h3 class="text-lg font-bold text-slate-100 tracking-tight group-hover:text-white line-clamp-1">
+            ${game.thumbnailUrl ? `
+              <div class="text-orange-400 shrink-0">
+                ${getIconSVG(game.icon, 'w-3.5 h-3.5')}
+              </div>
+            ` : ''}
+            <h3 class="text-[15px] font-bold text-slate-100 tracking-tight group-hover:text-white line-clamp-1">
               ${escapeHTML(game.title)}
             </h3>
             ${game.custom ? `
-              <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">
+              <span class="text-[9px] uppercase font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold shrink-0">
                 User
               </span>
             ` : ''}
           </div>
-          <p class="text-slate-400 text-xs mt-1.5 line-clamp-2 leading-relaxed flex-grow">
+          <p class="text-slate-400 text-[11px] leading-relaxed mt-1 line-clamp-2">
             ${escapeHTML(game.description)}
           </p>
         </div>
       </div>
 
       <!-- Card footer status strip -->
-      <div class="px-5 py-3.5 bg-slate-900/40 border-t border-slate-800/60 flex items-center justify-between text-xs">
-        <span class="font-mono text-[11px] font-bold tracking-wider text-slate-400 uppercase">
+      <div class="px-4 py-3 bg-slate-900/60 border-t border-slate-800/60 flex items-center justify-between text-[11px] shrink-0">
+        <span class="font-mono font-bold tracking-wider text-slate-400 uppercase">
           ${escapeHTML(game.category)}
         </span>
 
-        <span class="flex items-center gap-1 font-bold text-slate-300 group-hover:text-white transition-colors">
-          PLAY GAME <svg class="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <span class="flex items-center gap-1 font-bold text-slate-300 group-hover:text-white transition-colors uppercase tracking-wider font-mono">
+          PLAY <svg class="w-3.5 h-3.5 text-orange-500 transform group-hover:translate-x-1.5 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </span>
       </div>
     `;
@@ -476,6 +715,8 @@ function renderActiveGrid() {
           toggleFavoriteFromCard(game, targetBtn);
         } else if (actionType === 'delete-custom') {
           deleteCustomGameFromCard(game.id);
+        } else if (actionType === 'edit-thumbnail') {
+          openEditThumbnailModal(game);
         }
         return;
       }
@@ -544,6 +785,61 @@ function deleteCustomGameFromCard(id) {
 }
 
 /**
+ * Opens "Edit Thumbnail" Modal for a specific game (even global ones)
+ */
+function openEditThumbnailModal(game) {
+  editingGameForThumbnail = game;
+  
+  const modal = document.getElementById('edit-thumbnail-modal-ambient');
+  const subtitle = document.getElementById('edit-thumbnail-subtitle');
+  const inputEl = document.getElementById('input-edit-thumbnail-url');
+  const previewImg = document.getElementById('edit-thumbnail-preview-img');
+  const previewFallback = document.getElementById('edit-thumbnail-preview-fallback');
+  const fitSelect = document.getElementById('select-edit-thumbnail-fit');
+  
+  if (subtitle) {
+    subtitle.innerHTML = `Customize card cover for <span class="text-orange-400 font-bold">${escapeHTML(game.title)}</span>`;
+  }
+  
+  if (inputEl) {
+    inputEl.value = game.thumbnailUrl || '';
+  }
+  
+  if (fitSelect) {
+    fitSelect.value = game.thumbnailFit || 'cover';
+  }
+  
+  if (previewImg && previewFallback) {
+    const isContain = (game.thumbnailFit === 'contain');
+    previewImg.className = isContain ? 'w-full h-full object-contain p-1 bg-slate-950/95' : 'w-full h-full object-cover';
+    
+    if (game.thumbnailUrl) {
+      previewImg.src = game.thumbnailUrl;
+      previewImg.classList.remove('hidden');
+      previewFallback.classList.add('hidden');
+    } else {
+      previewImg.src = '';
+      previewImg.classList.add('hidden');
+      previewFallback.classList.remove('hidden');
+    }
+  }
+  
+  if (modal) {
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeEditThumbnailModal() {
+  editingGameForThumbnail = null;
+  const modal = document.getElementById('edit-thumbnail-modal-ambient');
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+}
+
+/**
  * Launch active game inside Play Arena Iframe player
  */
 function launchGame(game) {
@@ -584,7 +880,7 @@ function closeSelectedGame() {
  * Dynamic content population inside Play Arena frame wrapper
  */
 function setupArenaView(game) {
-  const gradientColor = game.color || 'from-indigo-500 to-purple-600';
+  const gradientColor = game.color || 'from-amber-500 to-orange-600';
 
   // Title displays
   document.getElementById('arena-game-label').textContent = game.title;
@@ -633,6 +929,15 @@ function setupArenaView(game) {
   // Populate actual active iFrame element
   const iframeContainer = document.getElementById('play-arena-frame-viewport-container');
   if (iframeContainer) {
+    const cleanedUrl = cleanGameUrl(game.iframeUrl);
+    const isCrazyGame = cleanedUrl.includes('crazygames.com');
+
+    if (isCrazyGame) {
+      iframeContainer.className = "w-full h-full relative overflow-hidden";
+    } else {
+      iframeContainer.className = "w-full h-full";
+    }
+
     iframeContainer.innerHTML = `
       <!-- Loading indicator -->
       <div id="play-loading-splash" class="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center z-10 p-6 text-center">
@@ -649,12 +954,13 @@ function setupArenaView(game) {
       <!-- Iframe -->
       <iframe
         id="game-active-iframe"
-        src="${game.iframeUrl}"
+        src="${cleanedUrl}"
         title="Play ${escapeHTML(game.title)} Unblocked"
-        class="w-full h-full border-0 absolute inset-0"
-        allow="autoplay; fullscreen; gamepad; focus; keyboard"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock"
-        referrerpolicy="no-referrer"
+        class="w-full border-0 absolute"
+        style="${isCrazyGame ? 'top: 0; left: 0; width: 100%; height: calc(100% + 42px);' : 'top: 0; left: 0; width: 100%; height: 100%;'}"
+        allow="autoplay; fullscreen; gamepad; focus; keyboard; accelerometer; gyroscope; keyboard-map; payment"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals allow-orientation-lock allow-presentation allow-downloads allow-popups-to-escape-sandbox"
+        referrerpolicy="no-referrer-when-downgrade"
       ></iframe>
     `;
 
@@ -739,10 +1045,13 @@ function newClearBtnHandler(cloned, action) {
 function handleFormSubmit() {
   const title = document.getElementById('input-game-title').value.trim();
   const description = document.getElementById('input-game-desc').value.trim();
-  const iframeUrl = document.getElementById('input-game-url').value.trim();
+  const rawUrl = document.getElementById('input-game-url').value.trim();
+  const iframeUrl = cleanGameUrl(rawUrl);
   const category = document.getElementById('select-game-category').value;
   const credits = document.getElementById('input-game-credits').value.trim();
   const instructions = document.getElementById('input-game-instructions').value.trim();
+  const thumbnailInput = document.getElementById('input-game-thumbnail');
+  const thumbnailUrl = thumbnailInput ? thumbnailInput.value.trim() : '';
 
   const errorBanner = document.getElementById('form-error-banner');
   if (errorBanner) errorBanner.classList.add('hidden');
@@ -777,6 +1086,7 @@ function handleFormSubmit() {
     instructions: instructions || 'Click inside frame and steer simulation using keyboard coordinates.',
     credits: credits || 'Independent Sandbox Dev',
     color: randomGradient,
+    thumbnailUrl: thumbnailUrl || '',
     custom: true
   };
 
@@ -848,6 +1158,10 @@ function getIconSVG(name, cls) {
   switch (name) {
     case 'Grid3X3':
       return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>`;
+    case 'Bus':
+      return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6v6"/><path d="M15 6v6"/><path d="M22 14v3a2 2 0 0 1-2 2h-1a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H4a2 2 0 0 1-2-2v-3"/><path d="M12 2H9a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2V7.83a2 2 0 0 0-.59-1.41L20.17 3A2 2 0 0 0 18.76 2h-2.17"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/></svg>`;
+    case 'Car':
+      return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 10h9l2 2H2"/></svg>`;
     case 'Bird':
       return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 12a4 4 0 0 1-8 0v-1a4 4 0 0 1 8 0Zm0-3h-8Zm8-3V4c0-.5-.5-1-1-1h-2a2 2 0 0 0-2 2v2M4 7h16M4 21c0-1.5 1-3 2.5-3h11c1.5 0 2.5 1.5 2.5 3"/></svg>`;
     case 'Hexagon':
