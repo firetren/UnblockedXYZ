@@ -118,7 +118,7 @@ async function initApp() {
 
   // Fetch games from JSON
   try {
-    const response = await fetch('./src/games.json');
+    const response = await fetch('./src/games.json?t=' + Date.now());
     const defaultGames = await response.json();
     
     // Fetch custom user added games
