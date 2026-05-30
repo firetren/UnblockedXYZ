@@ -4,13 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UnblockedXYZ - Unblocked Games Hub</title>
-    
-    <!-- Premium Google Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Responsive Tailwind CSS framework in raw browser CDN mode -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -21,72 +17,38 @@
               display: ['Space Grotesk', 'sans-serif'],
               mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
             },
-            colors: {
-              slate: {
-                850: '#1b2336',
-                955: '#060a14',
-              }
-            }
+            colors: { slate: { 850: '#1b2336', 955: '#060a14' } }
           }
         }
       }
     </script>
-
-    <!-- Custom Micro-Anims & Scrollbars config -->
     <style>
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       @keyframes pulseGlow {
         0%, 100% { opacity: 0.6; transform: scale(1); }
         50% { opacity: 1; transform: scale(1.05); }
       }
-      .animate-pulse-glow {
-        animation: pulseGlow 2s infinite ease-in-out;
-      }
+      .animate-pulse-glow { animation: pulseGlow 2s infinite ease-in-out; }
     </style>
   </head>
   <body class="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-orange-500/30 flex flex-col justify-between">
 
-    <!-- Top Navigation Bar Inspired by the Bento Theme -->
     <header class="h-20 border-b border-slate-900 flex items-center justify-between px-4 sm:px-8 bg-slate-900/50 backdrop-blur-md sticky top-0 z-40">
-      <div 
-        id="brand-header-logo-group"
-        class="flex items-center gap-3 cursor-pointer group"
-      >
-        <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-lg flex items-center justify-center font-bold text-xl tracking-tighter shadow-lg shadow-orange-500/30 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-          ⚡
-        </div>
+      <div id="brand-header-logo-group" class="flex items-center gap-3 cursor-pointer group">
+        <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-lg flex items-center justify-center font-bold text-xl tracking-tighter shadow-lg shadow-orange-500/30 transform group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">⚡</div>
         <div>
-          <h1 class="text-xl sm:text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 font-display">
-            UnblockedXYZ
-          </h1>
-          <p class="text-[9px] font-mono tracking-widest text-orange-400 uppercase font-medium">
-            unblocked games
-          </p>
+          <h1 class="text-xl sm:text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 font-display">UnblockedXYZ</h1>
+          <p class="text-[9px] font-mono tracking-widest text-orange-400 uppercase font-medium">unblocked games</p>
         </div>
       </div>
-
-      <!-- Live Search Engine in Header (Visible on Desktop) -->
       <div class="hidden md:flex flex-1 max-w-sm lg:max-w-md mx-6 lg:mx-12">
         <div class="relative flex items-center w-full">
-          <svg class="absolute left-4 text-slate-500 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input 
-            id="header-search-bar"
-            type="text" 
-            placeholder="Search catalog, authors, categories..." 
-            class="w-full bg-slate-800/40 border border-slate-800 rounded-full py-2 pl-11 pr-6 focus:outline-none focus:ring-2 focus:ring-orange-500/50 placeholder-slate-500 text-xs transition-colors"
-          />
+          <svg class="absolute left-4 text-slate-500 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="header-search-bar" type="text" placeholder="Search catalog, authors, categories..." class="w-full bg-slate-800/40 border border-slate-800 rounded-full py-2 pl-11 pr-6 focus:outline-none focus:ring-2 focus:ring-orange-500/50 placeholder-slate-500 text-xs transition-colors" />
         </div>
       </div>
-
-      <!-- Global Control Area -->
       <div class="flex items-center gap-3">
-        <!-- Account Status Button -->
         <button id="account-btn" class="flex items-center gap-2.5 bg-slate-900/60 border border-slate-800/80 hover:border-orange-500/50 rounded-full px-3.5 py-1.5 cursor-pointer text-xs font-semibold font-sans hover:bg-orange-500/10 transition-all select-none duration-250">
           <span id="nav-av" class="w-6 h-6 rounded-full bg-orange-600 text-white font-bold text-[10px] flex items-center justify-center tracking-tight shadow-md shadow-orange-700/20">?</span>
           <span id="nav-label" class="text-slate-300 font-bold uppercase font-mono tracking-wider max-w-[80px] sm:max-w-[124px] truncate">Sign in</span>
@@ -94,20 +56,13 @@
       </div>
     </header>
 
-    <!-- Main Content Panel Area -->
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col gap-8">
       
-      <!-- Screen A: Play Arena Gameplay Layout Viewport (Hidden unless game launched) -->
       <div id="game-play-arena-layout" class="hidden flex flex-col gap-6">
-        
-        <!-- Arena Options Navigation Header bar -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 backdrop-blur-sm">
           <div class="flex items-center gap-4">
-            <button
-              id="back-to-catalog-btn"
-              class="flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-slate-300 bg-slate-800 border border-slate-700 hover:bg-slate-750 hover:text-white rounded-xl transition-all"
-            >
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            <button id="back-to-catalog-btn" class="flex items-center gap-2 px-3.5 py-2 text-sm font-medium text-slate-300 bg-slate-800 border border-slate-700 hover:bg-slate-750 hover:text-white rounded-xl transition-all">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
               Back to Arcade
             </button>
             <div class="flex items-center gap-3">
@@ -121,8 +76,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Sandbox controls actions -->
           <div class="flex items-center gap-2.5">
             <button id="arena-favorite-btn" class="transition-all"></button>
             <button id="arena-reload-btn" class="flex items-center gap-2 px-3.5 py-2 text-sm font-bold text-slate-300 bg-slate-800 border border-slate-700 hover:bg-slate-750 hover:text-white rounded-xl transition-all">
@@ -140,26 +93,21 @@
           </div>
         </div>
 
-        <!-- Frame grid layout viewport -->
         <div id="play-arena-grid-layout" class="grid grid-cols-1 lg:grid-cols-3 max-w-6xl gap-6 mx-auto w-full transition-all duration-300">
-          
           <div class="lg:col-span-2 flex flex-col gap-4">
             <div id="play-arena-frame-viewport-wrapper" class="relative w-full aspect-[16/10] sm:aspect-[16/9] bg-slate-950 rounded-2xl border-2 border-slate-800 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
               <div id="play-arena-frame-viewport-container" class="w-full h-full"></div>
             </div>
-            
             <div id="arena-saves-warning-box" class="hidden">
               <div class="flex items-start gap-3 bg-rose-950/20 border border-rose-500/15 rounded-2xl p-4 text-xs text-rose-350">
                 <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                 <div>
-                  <h4 class="font-bold text-sm text-rose-400 mb-0.5">⚠️ No Account Cloud Saves</h4>
-                  <p class="leading-relaxed text-rose-200">Because games run in an isolated browser sandbox, <strong>progress, custom levels, and high scores are NOT saved to your account database</strong>. Refreshing or exiting the game resets your session.</p>
+                  <h4 class="font-bold text-sm text-rose-400 mb-0.5">No Account Cloud Saves</h4>
+                  <p class="leading-relaxed text-rose-200">Game progress is not saved to your account.</p>
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- Info columns -->
           <div class="flex flex-col gap-5">
             <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50 backdrop-blur-sm flex flex-col gap-4">
               <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-slate-700/50 pb-3 font-display">
@@ -168,7 +116,6 @@
               </h3>
               <p id="arena-game-instructions" class="text-sm text-slate-300 leading-relaxed"></p>
             </div>
-
             <div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50 backdrop-blur-sm flex flex-col gap-4">
               <h3 class="text-base font-bold text-white flex items-center gap-2 border-b border-slate-700/50 pb-3 font-display">
                 <svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
@@ -179,102 +126,70 @@
                   <span class="text-slate-400">Credits/Authors</span>
                   <span id="arena-game-credits-name" class="text-slate-200 font-bold"></span>
                 </div>
-
               </div>
             </div>
           </div>
-
         </div>
-
       </div>
 
-      <!-- Screen B: Dynamic Homescreen Bento Showcase -->
       <div id="homescreen-browser-layout" class="flex flex-col gap-8 animate-fade-in">
-        
-        <!-- Mobile Search input bar (only visible on small display ports) -->
         <div class="relative flex items-center w-full md:hidden">
           <svg class="absolute left-4 text-slate-500 w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <input 
-            id="header-search-bar-mobile"
-            type="text" 
-            placeholder="Search catalog, authors, categories..." 
-            class="w-full bg-slate-900 border border-slate-800 rounded-full py-2.5 pl-11 pr-6 focus:outline-none focus:ring-2 focus:ring-orange-500/50 placeholder-slate-500 text-xs transition-colors"
-          />
+          <input id="header-search-bar-mobile" type="text" placeholder="Search catalog, authors, categories..." class="w-full bg-slate-900 border border-slate-800 rounded-full py-2.5 pl-11 pr-6 focus:outline-none focus:ring-2 focus:ring-orange-500/50 placeholder-slate-500 text-xs transition-colors" />
         </div>
 
-        <!-- Main Aesthetic Bento Mosaic grid structure -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          <!-- Bento Column 1: Feature Banner block (Large Bento 2x2) -->
           <div class="col-span-1 md:col-span-2 lg:row-span-2 bg-slate-900/90 rounded-3xl border border-slate-800 overflow-hidden relative group p-6 sm:p-8 flex flex-col justify-between h-[360px] sm:h-[400px] hover:border-slate-700/60 transition-colors">
             <div id="featured-game-bg-image" class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:scale-105 transition-transform duration-700 pointer-events-none z-0"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent z-10"></div>
-            <div class="absolute inset-0 bg-orange-500/[0.04] mix-blend-overlay pointer-events-none"></div>
-
             <div class="relative z-20 flex justify-end items-start">
               <div class="bg-slate-950/80 backdrop-blur rounded-2xl p-3 border border-slate-800 text-right">
                 <div class="text-[9px] text-slate-500 tracking-wider uppercase font-mono">Simulated Ping</div>
                 <div class="text-sm font-mono text-emerald-400 font-bold">14ms • ONLINE</div>
               </div>
             </div>
-
             <div class="relative z-20 mt-auto">
               <span id="featured-game-category" class="text-xs font-mono font-bold text-orange-400 uppercase tracking-widest block mb-1">Car games</span>
               <h2 id="featured-game-title" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-2 uppercase font-display">HTML5 Snake</h2>
               <p id="featured-game-desc" class="text-slate-400 text-xs sm:text-sm max-w-sm mb-4 line-clamp-2"></p>
               <div>
-                <button 
-                  id="featured-play-btn"
-                  onclick="xyzTrackPlay(); playGame()"
-                  class="bg-white text-slate-950 font-extrabold text-xs py-3 px-6 rounded-xl hover:bg-slate-200 transition-colors cursor-pointer uppercase tracking-wider shadow-lg shadow-black/10 font-sans"
-                >
-                  PLAY GAME
-                </button>
+                <button id="featured-play-btn" onclick="xyzTrackPlay(); playGame()" class="bg-white text-slate-950 font-extrabold text-xs py-3 px-6 rounded-xl hover:bg-slate-200 transition-colors cursor-pointer uppercase tracking-wider shadow-lg shadow-black/10 font-sans">PLAY GAME</button>
               </div>
             </div>
           </div>
 
-          <!-- Bento Column 4 & 5: Horizontal Statistics row -->
           <div class="col-span-1 md:col-span-2 bg-slate-900 rounded-3xl border border-slate-800 p-6 flex items-center justify-around gap-4 min-h-[160px]">
             <div class="text-center flex-1">
               <div id="stats-total-count" class="text-2xl font-black text-white font-display">0</div>
               <div class="text-[9px] text-slate-500 uppercase tracking-widest font-mono mt-0.5">Total Games</div>
             </div>
             <div class="h-12 w-[1px] bg-slate-800 shrink-0"></div>
-            
             <div class="text-center flex-1">
               <div id="stats-fav-count" class="text-2xl font-black text-orange-400 font-display">0</div>
               <div class="text-[9px] text-slate-500 uppercase tracking-widest font-mono mt-0.5">Favorited</div>
             </div>
             <div class="h-12 w-[1px] bg-slate-800 shrink-0"></div>
-
             <div class="text-center flex-1">
               <div class="text-2xl font-black text-emerald-400 font-display">99.9%</div>
               <div class="text-[9px] text-slate-500 uppercase tracking-widest font-mono mt-0.5">Uptime</div>
             </div>
           </div>
 
-          <!-- Bento Column 6: Secure Sandbox notice banner card -->
           <div class="col-span-1 md:col-span-2 bg-gradient-to-br from-orange-600 to-red-600 rounded-3xl p-6 flex flex-col justify-center gap-2 text-white min-h-[160px]">
             <div>
               <h3 class="text-base font-extrabold tracking-tight uppercase font-display">No More Sketchy Downloading</h3>
               <p class="text-orange-100 text-xs mt-1.5 leading-relaxed">Everything is played in your browser</p>
             </div>
           </div>
-
         </div>
 
-        <!-- Section: Recently Played mini history tracker -->
         <div id="recently-played-section" class="hidden bg-slate-900/20 p-4 rounded-3xl border border-slate-900 flex flex-col gap-3">
           <h3 class="text-xs font-mono font-bold uppercase text-slate-400 tracking-wider flex items-center justify-between">
             <span class="flex items-center gap-2">
               <svg class="w-4 h-4 text-orange-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               Recently Played
             </span>
-            <button
-              id="clear-recents-btn"
-              class="text-slate-500 hover:text-slate-350 transition-colors text-[10px] font-mono flex items-center gap-1 cursor-pointer"
-            >
+            <button id="clear-recents-btn" class="text-slate-500 hover:text-slate-350 transition-colors text-[10px] font-mono flex items-center gap-1 cursor-pointer">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 1 1 20 12l-.01.01"/><path d="m21 12-4 4-2-2"/></svg>
               Clear History
             </button>
@@ -282,39 +197,26 @@
           <div id="recently-played-list-container" class="flex flex-wrap gap-2.5"></div>
         </div>
 
-        <!-- Categories Filters + Results line strip -->
         <div class="flex flex-col gap-6 mt-4">
           <div class="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center border-b border-slate-900 pb-4">
-            <nav 
-              id="categories-tab-bar" 
-              class="flex items-center gap-5 sm:gap-7 overflow-x-auto select-none no-scrollbar py-1"
-            >
+            <nav id="categories-tab-bar" class="flex items-center gap-5 sm:gap-7 overflow-x-auto select-none no-scrollbar py-1">
               <button data-category="All" class="text-xs font-bold tracking-widest uppercase cursor-pointer transition-colors shrink-0 pb-1.5 border-b-2 text-orange-400 border-orange-500 font-black">All</button>
               <button data-category="Arcade" class="text-xs font-bold tracking-widest uppercase cursor-pointer transition-colors shrink-0 pb-1.5 border-b-2 text-slate-400 border-transparent hover:text-slate-200">Arcade</button>
               <button data-category="Puzzle" class="text-xs font-bold tracking-widest uppercase cursor-pointer transition-colors shrink-0 pb-1.5 border-b-2 text-slate-400 border-transparent hover:text-slate-200">Puzzle</button>
               <button data-category="Skill" class="text-xs font-bold tracking-widest uppercase cursor-pointer transition-colors shrink-0 pb-1.5 border-b-2 text-slate-400 border-transparent hover:text-slate-200">Skill</button>
               <button data-category="Retro" class="text-xs font-bold tracking-widest uppercase cursor-pointer transition-colors shrink-0 pb-1.5 border-b-2 text-slate-400 border-transparent hover:text-slate-200">Retro</button>
-              
               <button data-category="Favorites" class="text-xs font-bold tracking-widest uppercase cursor-pointer transition-colors shrink-0 pb-1.5 border-b-2 text-slate-400 border-transparent hover:text-slate-200 flex items-center gap-1.5">
                 Favorites
                 <span id="fav-category-badge" class="hidden px-2 py-0.5 text-[9px] bg-orange-500/15 text-orange-300 border border-orange-500/20 rounded-full font-mono font-bold">0</span>
               </button>
-              
               <button data-category="Custom" class="text-xs font-bold tracking-widest uppercase cursor-pointer transition-colors shrink-0 pb-1.5 border-b-2 text-slate-400 border-transparent hover:text-slate-200 flex items-center gap-1.5">
                 Custom
                 <span id="custom-category-badge" class="hidden px-2 py-0.5 text-[9px] bg-orange-500/15 text-orange-300 border border-orange-500/20 rounded-full font-mono font-bold">0</span>
               </button>
             </nav>
-
-            <span id="grid-result-statistics" class="text-[10px] uppercase font-mono font-bold text-slate-500 self-end">
-              Showing 0 of 0 simulations
-            </span>
+            <span id="grid-result-statistics" class="text-[10px] uppercase font-mono font-bold text-slate-500 self-end">Showing 0 of 0 simulations</span>
           </div>
-
-          <!-- Main listings grid layout container -->
           <div id="games-grid-layout" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in"></div>
-
-          <!-- Grid empty state view block (Hidden by default unless query fails) -->
           <div id="grid-empty-state" class="hidden py-20 flex flex-col items-center justify-center text-center max-w-md mx-auto">
             <div class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 text-slate-500 flex items-center justify-center mb-5">
               <svg class="w-8 h-8" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>
@@ -323,14 +225,10 @@
             <p id="empty-state-description" class="text-sm text-slate-400 mt-2 font-sans leading-relaxed"></p>
             <button id="empty-state-action-btn" class="mt-6 px-5 py-2.5 text-xs font-mono font-bold uppercase bg-orange-600 hover:bg-orange-500 rounded-xl text-white transition-all flex items-center gap-1.5 cursor-pointer"></button>
           </div>
-
         </div>
-
       </div>
-
     </main>
 
-    <!-- Adheres to design margins: styled footer aligned with theme -->
     <footer class="h-16 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between px-8 text-[10px] text-slate-500 uppercase tracking-tighter bg-slate-950/60 shrink-0 py-4 sm:py-0 text-center gap-2 font-mono">
       <div>&copy; 2026 UNBLOCKEDXYZ NETWORKS</div>
       <div class="flex flex-wrap gap-4 sm:gap-6 justify-center items-center">
@@ -351,11 +249,9 @@
       </div>
     </footer>
 
-    <!-- Add Custom Game Iframe submission Modal Pop-up (Hidden by default) -->
+    <!-- Add Custom Game Modal -->
     <div id="add-game-modal-ambient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
       <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden">
-        
-        <!-- Modal Heading titles -->
         <div class="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
           <div class="flex items-center gap-2.5">
             <div class="p-2 rounded-lg bg-orange-500/10 text-orange-400">
@@ -370,8 +266,6 @@
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
-
-        <!-- Success overlay display (Interchanged in JS) -->
         <div id="add-game-success-message" class="hidden py-12 flex flex-col items-center justify-center text-center">
           <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4 border border-emerald-500/30">
             <svg class="w-8 h-8" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 6 9 17l-5-5"/></svg>
@@ -379,17 +273,12 @@
           <h4 class="text-lg font-bold text-white">Game Saved!</h4>
           <p class="text-sm text-slate-400 mt-1">Stored into your local browser sandbox repository.</p>
         </div>
-
-        <!-- Add custom game input elements form -->
-        <form id="custom-game-add-form" class="p-6 flex flex-col gap-4.5 max-h-[75vh] overflow-y-auto">
-          <!-- Error banner notification placeholder -->
+        <form id="custom-game-add-form" class="p-6 flex flex-col gap-4 max-h-[75vh] overflow-y-auto">
           <div id="form-error-banner" class="hidden bg-rose-950/40 border border-rose-500/30 rounded-xl p-3 text-xs text-rose-300 font-mono"></div>
-
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Game Title *</label>
             <input id="input-game-title" type="text" placeholder="e.g. Mario Browser Clone" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" required />
           </div>
-
           <div class="grid grid-cols-2 gap-4">
             <div class="flex flex-col gap-1.5">
               <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Category *</label>
@@ -405,51 +294,33 @@
               <input id="input-game-credits" type="text" placeholder="e.g. Nintendo or Open Source" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
             </div>
           </div>
-
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Short Description *</label>
             <textarea id="input-game-desc" placeholder="Summarize the core story or gameplay in 1-2 lines..." rows="2" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-orange-500/50 transition-colors resize-none" required></textarea>
           </div>
-
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Iframe URL / Web Game link *</label>
             <input id="input-game-url" type="url" placeholder="https://example.com/game/" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" required />
-            <span class="text-[9px] text-slate-500 font-mono mt-0.5 leading-relaxed">
-              Accepts secure unblocked links. Standard hosting pages like GitHub Pages (*.github.io) are ideal and free of security restrictions!
-            </span>
           </div>
-
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Thumbnail Image URL</label>
-            <input id="input-game-thumbnail" type="url" placeholder="https://images.unsplash.com/... or any web image. Optional." class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
-            <span class="text-[9px] text-slate-500 font-mono mt-0.5 leading-relaxed">
-              Pasted image URL will be displayed as the custom game card cover. Leave empty to use class default generator!
-            </span>
+            <input id="input-game-thumbnail" type="url" placeholder="https://images.unsplash.com/... Optional." class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
           </div>
-
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Gameplay Controls (Instructions)</label>
             <textarea id="input-game-instructions" placeholder="e.g. Press WASD or Mouse cursors to play." rows="2" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-orange-500/50 transition-colors resize-none"></textarea>
           </div>
-
-          <div class="flex gap-2.5 bg-yellow-950/20 border border-yellow-500/10 rounded-xl p-3 text-[10px] text-yellow-300 font-sans">
-            <svg class="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
-            <p>Saved games are stored inside your browser's local cache sandbox. Cleansers or wiping site data might reset user submissions.</p>
-          </div>
-
           <div class="flex items-center justify-end gap-3 border-t border-slate-800 pt-5 mt-2">
             <button id="form-cancel-btn" type="button" class="px-4 py-2.5 text-xs font-bold uppercase font-mono text-slate-300 bg-slate-800 hover:bg-slate-755 rounded-xl transition-colors cursor-pointer">Cancel</button>
             <button id="form-submit-btn" type="submit" class="px-5 py-2.5 text-xs font-bold uppercase font-mono text-white bg-gradient-to-r from-orange-600 to-red-600 hover:brightness-110 rounded-xl shadow-lg shadow-orange-950/40 transition-all cursor-pointer">Save to Arcade</button>
           </div>
         </form>
-
       </div>
     </div>
-    <!-- Edit Thumbnail Modal (Hidden by default) -->
+
+    <!-- Edit Thumbnail Modal -->
     <div id="edit-thumbnail-modal-ambient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
       <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden">
-        
-        <!-- Modal Heading titles -->
         <div class="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
           <div class="flex items-center gap-2.5">
             <div class="p-2 rounded-lg bg-orange-500/10 text-orange-400">
@@ -464,9 +335,7 @@
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
-
         <form id="edit-thumbnail-form" class="p-6 flex flex-col gap-4">
-          <!-- Thumbnail preview box -->
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Current / New Preview</label>
             <div class="relative w-full h-36 rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center">
@@ -477,45 +346,31 @@
               </div>
             </div>
           </div>
-
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Thumbnail Image URL</label>
-            <input id="input-edit-thumbnail-url" type="url" placeholder="https://images.unsplash.com/... or any static image link" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
-            <span class="text-[10px] text-slate-500 font-mono mt-0.5 leading-relaxed">
-              Accepts standard web image URLs (PNG, JPEG, WEBP) or Unsplash photos.
-            </span>
+            <input id="input-edit-thumbnail-url" type="url" placeholder="https://images.unsplash.com/..." class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
           </div>
-
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">Image Fit Style</label>
             <select id="select-edit-thumbnail-fit" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500/50 transition-colors">
               <option value="cover">Fill Cover (Crops to fit)</option>
               <option value="contain">Fit Completely (Show entire photo)</option>
             </select>
-            <span class="text-[10px] text-slate-500 font-mono mt-0.5 leading-relaxed">
-              "Fit Completely" is perfect for showing character artwork and full poster scenes without any cropping!
-            </span>
           </div>
-
           <div class="flex items-center justify-between border-t border-slate-800 pt-5 mt-2">
-            <button id="edit-thumbnail-reset-btn" type="button" class="px-3.5 py-2.5 text-xs font-bold uppercase font-mono text-rose-500 border border-slate-800 hover:bg-rose-950 hover:text-rose-450 rounded-xl transition-colors cursor-pointer">
-              Restore Default
-            </button>
+            <button id="edit-thumbnail-reset-btn" type="button" class="px-3.5 py-2.5 text-xs font-bold uppercase font-mono text-rose-500 border border-slate-800 hover:bg-rose-950 rounded-xl transition-colors cursor-pointer">Restore Default</button>
             <div class="flex gap-2.5">
               <button id="edit-thumbnail-cancel-btn" type="button" class="px-4 py-2.5 text-xs font-bold uppercase font-mono text-slate-350 bg-slate-800 hover:bg-slate-750 rounded-xl transition-colors cursor-pointer">Cancel</button>
               <button id="edit-thumbnail-submit-btn" type="submit" class="px-5 py-2.5 text-xs font-bold uppercase font-mono text-white bg-gradient-to-r from-orange-600 to-red-600 hover:brightness-110 rounded-xl shadow-lg shadow-orange-950/40 transition-all cursor-pointer">Save Cover</button>
             </div>
           </div>
         </form>
-
       </div>
     </div>
 
-    <!-- User Account System Modal (Hidden by default) -->
+    <!-- Account Modal -->
     <div id="xyz-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
       <div id="xyz-modal" class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden">
-        
-        <!-- Modal Heading -->
         <div class="px-6 py-5 border-b border-slate-805 flex items-center justify-between bg-slate-900/40">
           <div class="flex items-center gap-2.5">
             <div class="p-2 rounded-lg bg-orange-500/10 text-orange-400">
@@ -523,26 +378,19 @@
             </div>
             <div>
               <h3 id="xyz-modal-title" class="text-base font-bold text-white font-display">Account Hub</h3>
-              <p id="xyz-modal-subtitle" class="text-xs text-slate-400">Track stats & sync customizations</p>
+              <p id="xyz-modal-subtitle" class="text-xs text-slate-400">Track stats &amp; sync customizations</p>
             </div>
           </div>
           <button id="xyz-close" onclick="xyzCloseModal()" class="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-750 hover:text-white transition-colors cursor-pointer">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
-
-        <!-- Auth Forms Block -->
         <div id="auth-forms" class="p-6 flex flex-col gap-4">
           <div class="xyz-tabs flex p-1 bg-slate-955 border border-slate-850 rounded-xl">
             <button id="xyz-tab-login" class="flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-white bg-slate-800" onclick="xyzTab('login')">Sign In</button>
             <button id="xyz-tab-register" class="flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-slate-400 hover:bg-slate-900 hover:text-white" onclick="xyzTab('register')">Register</button>
           </div>
-
-          <!-- Error Alert Banner -->
-          <div id="xyz-err" class="hidden p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300 leading-relaxed max-h-24 overflow-y-auto no-scrollbar">
-          </div>
-
-          <!-- Email/Password Login Form -->
+          <div id="xyz-err" class="hidden p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300 leading-relaxed max-h-24 overflow-y-auto no-scrollbar"></div>
           <div id="xyz-login" class="flex flex-col gap-3">
             <div class="flex flex-col gap-1.5">
               <label class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wide">Email Address</label>
@@ -554,8 +402,6 @@
             </div>
             <button id="xyz-login-btn" onclick="xyzLogin()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-white bg-gradient-to-r from-orange-600 to-red-600 hover:brightness-110 rounded-xl shadow-lg shadow-orange-950/40 transition-all cursor-pointer mt-2">Sign In with Email</button>
           </div>
-
-          <!-- Email/Password Registration Form -->
           <div id="xyz-register" class="hidden flex flex-col gap-3">
             <div class="flex flex-col gap-1.5">
               <label class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wide">Username</label>
@@ -571,152 +417,101 @@
             </div>
             <button id="xyz-register-btn" onclick="xyzRegister()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:brightness-110 rounded-xl shadow-lg shadow-green-950/40 transition-all cursor-pointer mt-2">Create Account</button>
           </div>
-
-          <!-- Easy Google Sign-In (Highly Preferred standard) -->
           <div class="flex items-center my-1 select-none">
             <div class="flex-grow border-t border-slate-800/80"></div>
             <span class="px-3 text-[10px] font-mono font-bold text-slate-500 uppercase">Or Continue With</span>
             <div class="flex-grow border-t border-slate-800/80"></div>
           </div>
-
           <button onclick="xyzGoogleSignIn()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-slate-200 bg-slate-850 hover:bg-slate-800 border border-slate-800 hover:border-slate-705 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 select-none">
             <svg class="w-4 h-4 text-orange-500" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/></svg>
             Sign In with Google
           </button>
         </div>
-
-        <!-- Profile Detail View (Shown when logged in) -->
         <div id="profile-view" class="hidden p-6 flex flex-col gap-5">
           <div class="flex items-center gap-4 bg-slate-955 border border-slate-850 rounded-2xl p-4">
-            <div id="pv-av" class="w-12 h-12 rounded-full border border-orange-500/30 flex items-center justify-center font-black text-sm text-white shadow-lg shadow-orange-950/20 select-none">
-              ?
-            </div>
+            <div id="pv-av" class="w-12 h-12 rounded-full border border-orange-500/30 flex items-center justify-center font-black text-sm text-white shadow-lg shadow-orange-950/20 select-none">?</div>
             <div class="flex-grow min-w-0">
               <h4 id="pv-name" class="font-bold text-white text-sm truncate">Gamer</h4>
               <p id="pv-email" class="text-xs text-slate-500 font-mono tracking-tight truncate mt-0.5">user@mail.com</p>
             </div>
           </div>
-
-          <!-- Statistics Cards Grid layout -->
           <div class="grid grid-cols-2 gap-3.5">
-            <div class="bg-slate-950 border border-slate-850 rounded-2xl p-4 text-center group hover:border-orange-500/20 transition-all">
+            <div class="bg-slate-950 border border-slate-850 rounded-2xl p-4 text-center">
               <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest block">Games Played</span>
               <span id="pv-played" class="text-2xl font-black text-orange-500 tracking-tight block mt-1">0</span>
             </div>
-            <div class="bg-slate-955 border border-slate-850 rounded-2xl p-4 text-center group hover:border-emerald-500/20 transition-all">
+            <div class="bg-slate-955 border border-slate-850 rounded-2xl p-4 text-center">
               <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest block">Member Since</span>
               <span id="pv-since" class="text-xs font-black text-emerald-500 block uppercase font-mono mt-3">May 2026</span>
             </div>
           </div>
-
-          <!-- Action dialog control buttons -->
           <div class="flex flex-col gap-2 border-t border-slate-800 pt-5 mt-2">
             <button onclick="xyzCloseModal()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-slate-300 bg-slate-800 hover:bg-slate-750 rounded-xl transition-all cursor-pointer">Continue Playing</button>
             <button onclick="xyzLogout()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-rose-500 border border-slate-800 hover:bg-rose-950 hover:text-rose-400 rounded-xl transition-all cursor-pointer">Sign Out</button>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- Interface scripts bridge to auth system ESM -->
+    <!-- Auth Script -->
     <script type="module">
-      import {
-        setupFirebase,
-        registerUser,
-        loginUser,
-        loginUserWithGoogle,
-        logoutUser,
-        onUserChanged,
-        incrementGamesPlayed,
-        getUserProfile
-      } from "./src/auth.js";
+      import { setupFirebase, registerUser, loginUser, loginUserWithGoogle, logoutUser, onUserChanged, incrementGamesPlayed, getUserProfile } from "./src/auth.js";
 
-      // Earliest safe placeholders to prevent early runtime onclick failures
-      window.xyzTrackPlay = window.xyzTrackPlay || (async () => {
-        console.debug("xyzTrackPlay placeholder executed.");
-      });
-      window.playGame = window.playGame || ((gameId) => {
-        console.debug("playGame placeholder executed.");
-      });
+      window.xyzTrackPlay = window.xyzTrackPlay || (async () => { console.debug("xyzTrackPlay placeholder."); });
+      window.playGame = window.playGame || ((gameId) => { console.debug("playGame placeholder."); });
 
-      // Global window binding interface so regular HTML binds can interact natively
-      window.xyzOpenModal = () => {
-        const overlay = document.getElementById("xyz-overlay");
-        if (overlay) overlay.classList.remove("hidden");
-      };
-
-      window.xyzCloseModal = () => {
-        const overlay = document.getElementById("xyz-overlay");
-        if (overlay) overlay.classList.add("hidden");
-        xyzClearErr();
-      };
+      window.xyzOpenModal = () => { document.getElementById("xyz-overlay")?.classList.remove("hidden"); };
+      window.xyzCloseModal = () => { document.getElementById("xyz-overlay")?.classList.add("hidden"); xyzClearErr(); };
 
       window.xyzTab = (tab) => {
         const loginForm = document.getElementById("xyz-login");
         const registerForm = document.getElementById("xyz-register");
         const tabLogin = document.getElementById("xyz-tab-login");
         const tabRegister = document.getElementById("xyz-tab-register");
-
         if (tab === "login") {
-          loginForm.classList.remove("hidden");
-          registerForm.classList.add("hidden");
+          loginForm.classList.remove("hidden"); registerForm.classList.add("hidden");
           tabLogin.className = "flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-white bg-slate-800";
           tabRegister.className = "flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-slate-400 hover:bg-slate-900 hover:text-white";
         } else {
-          loginForm.classList.add("hidden");
-          registerForm.classList.remove("hidden");
+          loginForm.classList.add("hidden"); registerForm.classList.remove("hidden");
           tabLogin.className = "flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-slate-400 hover:bg-slate-900 hover:text-white";
           tabRegister.className = "flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-white bg-slate-800";
         }
         xyzClearErr();
       };
 
-      // Handle UI Error feedback
       function xyzErr(msg) {
         const errAlert = document.getElementById("xyz-err");
-        if (errAlert) {
-          errAlert.textContent = msg;
-          errAlert.classList.remove("hidden");
-        }
+        if (errAlert) { errAlert.textContent = msg; errAlert.classList.remove("hidden"); }
       }
-
       function xyzClearErr() {
-        const errAlert = document.getElementById("xyz-err");
-        if (errAlert) {
-          errAlert.classList.add("hidden");
-        }
+        document.getElementById("xyz-err")?.classList.add("hidden");
       }
-
       function friendlyError(code) {
         const map = {
           "auth/email-already-in-use": "That email is already registered. Try signing in.",
-          "auth/invalid-email":        "Please enter a valid email address.",
-          "auth/wrong-password":       "Incorrect password. Try again.",
-          "auth/user-not-found":       "No account with that email. Register instead?",
-          "auth/weak-password":        "Password should be at least 6 characters.",
-          "auth/too-many-requests":    "Too many attempts. Please wait a moment.",
-          "auth/invalid-credential":   "Email or password is incorrect.",
+          "auth/invalid-email": "Please enter a valid email address.",
+          "auth/wrong-password": "Incorrect password. Try again.",
+          "auth/user-not-found": "No account with that email. Register instead?",
+          "auth/weak-password": "Password should be at least 6 characters.",
+          "auth/too-many-requests": "Too many attempts. Please wait a moment.",
+          "auth/invalid-credential": "Email or password is incorrect.",
         };
         return map[code] || code || "Something went wrong. Please try again.";
       }
 
-      // Action Handlers
       window.xyzRegister = async () => {
         const nameInput = document.getElementById("re-name");
         const emailInput = document.getElementById("re-email");
         const passInput = document.getElementById("re-pass");
-
         const username = nameInput ? nameInput.value.trim() : "";
         const email = emailInput ? emailInput.value.trim() : "";
         const password = passInput ? passInput.value : "";
-
         xyzClearErr();
         if (!username) return xyzErr("Please enter a username.");
         if (username.length < 3) return xyzErr("Username must be at least 3 characters.");
         if (!email) return xyzErr("Please enter your email.");
         if (!password || password.length < 6) return xyzErr("Password must be at least 6 characters.");
-
         try {
           await registerUser(username, email, password);
           if (nameInput) nameInput.value = "";
@@ -724,58 +519,44 @@
           if (passInput) passInput.value = "";
           window.xyzCloseModal();
         } catch (e) {
-          xyzErr(friendlyError(e.code || e.message));
+          if (e.message === "USERNAME_TAKEN") {
+            xyzErr("That username is already taken. Please choose another.");
+          } else {
+            xyzErr(friendlyError(e.code || e.message));
+          }
         }
       };
 
       window.xyzLogin = async () => {
         const emailInput = document.getElementById("li-email");
         const passInput = document.getElementById("li-pass");
-
         const email = emailInput ? emailInput.value.trim() : "";
         const password = passInput ? passInput.value : "";
-
         xyzClearErr();
         if (!email) return xyzErr("Please enter your email.");
         if (!password) return xyzErr("Please enter your password.");
-
         try {
           await loginUser(email, password);
           if (emailInput) emailInput.value = "";
           if (passInput) passInput.value = "";
           window.xyzCloseModal();
-        } catch (e) {
-          xyzErr(friendlyError(e.code || e.message));
-        }
+        } catch (e) { xyzErr(friendlyError(e.code || e.message)); }
       };
 
       window.xyzGoogleSignIn = async () => {
         xyzClearErr();
-        try {
-          await loginUserWithGoogle();
-          window.xyzCloseModal();
-        } catch (e) {
-          xyzErr(friendlyError(e.code || e.message));
-        }
+        try { await loginUserWithGoogle(); window.xyzCloseModal(); }
+        catch (e) { xyzErr(friendlyError(e.code || e.message)); }
       };
 
       window.xyzLogout = async () => {
-        try {
-          await logoutUser();
-          window.xyzCloseModal();
-        } catch (e) {
-          console.error("Signout failed: ", e);
-        }
+        try { await logoutUser(); window.xyzCloseModal(); }
+        catch (e) { console.error("Signout failed: ", e); }
       };
 
-      // Bootstrap initialization check
       setupFirebase().then((state) => {
         const accountBtn = document.getElementById("account-btn");
-        if (accountBtn) {
-          accountBtn.addEventListener("click", () => {
-            window.xyzOpenModal();
-          });
-        }
+        if (accountBtn) accountBtn.addEventListener("click", () => window.xyzOpenModal());
 
         if (state.isConfigured) {
           onUserChanged((user) => {
@@ -783,25 +564,13 @@
             const navLabel = document.getElementById("nav-label");
             const authForms = document.getElementById("auth-forms");
             const profileView = document.getElementById("profile-view");
-
             if (user) {
-              // Logged in
               const color = window._pickColor(user.uid);
               const initialsText = window._initials(user.displayName || "Gamer");
-
-              if (navAv) {
-                navAv.textContent = initialsText;
-                navAv.style.backgroundColor = color;
-              }
-              if (navLabel) {
-                navLabel.textContent = user.displayName || "Gamer";
-              }
-
-              // Sync forms visibility
+              if (navAv) { navAv.textContent = initialsText; navAv.style.backgroundColor = color; }
+              if (navLabel) navLabel.textContent = user.displayName || "Gamer";
               if (authForms) authForms.classList.add("hidden");
               if (profileView) profileView.classList.remove("hidden");
-
-              // Load extra data from firestore
               getUserProfile(user.uid).then((data) => {
                 if (data) {
                   const pvAv = document.getElementById("pv-av");
@@ -809,63 +578,36 @@
                   const pvEmail = document.getElementById("pv-email");
                   const pvPlayed = document.getElementById("pv-played");
                   const pvSince = document.getElementById("pv-since");
-
-                  if (pvAv) {
-                    pvAv.textContent = window._initials(data.username || "Gamer");
-                    pvAv.style.backgroundColor = data.avatarColor || color;
-                  }
+                  if (pvAv) { pvAv.textContent = window._initials(data.username || "Gamer"); pvAv.style.backgroundColor = data.avatarColor || color; }
                   if (pvName) pvName.textContent = data.username || "Gamer";
                   if (pvEmail) pvEmail.textContent = user.email;
                   if (pvPlayed) pvPlayed.textContent = data.gamesPlayed || 0;
-
                   if (pvSince && data.createdAt) {
-                    let d;
-                    if (typeof data.createdAt.toDate === "function") {
-                      d = data.createdAt.toDate();
-                    } else {
-                      d = new Date(data.createdAt);
-                    }
+                    let d = typeof data.createdAt.toDate === "function" ? data.createdAt.toDate() : new Date(data.createdAt);
                     pvSince.textContent = d.toLocaleString("default", { month: "short", year: "numeric" });
                   }
                 }
               });
-
             } else {
-              // Logged out
-              if (navAv) {
-                navAv.textContent = "?";
-                navAv.style.backgroundColor = "#E85D2B";
-              }
-              if (navLabel) {
-                navLabel.textContent = "Sign in";
-              }
-
+              if (navAv) { navAv.textContent = "?"; navAv.style.backgroundColor = "#E85D2B"; }
+              if (navLabel) navLabel.textContent = "Sign in";
               if (authForms) authForms.classList.remove("hidden");
               if (profileView) profileView.classList.add("hidden");
             }
           });
-
-          // Interface bridge to increment gameplay on request
           window.xyzTrackPlay = async () => {
             const user = window._xyzAuth?.currentUser;
-            if (user) {
-              await incrementGamesPlayed(user.uid);
-            }
+            if (user) await incrementGamesPlayed(user.uid);
           };
         } else {
-          // Fallback interface if credentials are missing
-          console.info("Running UnblockedXYZ in sandbox offline profile mode.");
-          window.xyzTrackPlay = async () => {
-            // No-op or local sandbox mock increment
-          };
+          window.xyzTrackPlay = async () => {};
         }
       });
     </script>
 
-    <!-- Codebase Sync Modal (Hidden by default) -->
+    <!-- Codebase Sync Modal -->
     <div id="sync-codebase-modal-ambient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
       <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden">
-        
         <div class="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
           <div class="flex items-center gap-2.5">
             <div class="p-2 rounded-lg bg-orange-500/10 text-orange-400">
@@ -880,42 +622,132 @@
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
         </div>
-
         <div class="p-6 flex flex-col gap-4">
-          <p class="text-xs text-slate-300 leading-relaxed font-sans font-medium">
-            When you customize thumbnails or categories, those changes are stored locally in your current browser's private <strong class="text-orange-400">Local Storage</strong>. To make them show up permanently for <strong class="text-white">everyone on your main live website</strong>, we need to save them into the central <code class="bg-slate-950 px-1 py-0.5 rounded text-[11px] font-mono border border-slate-800 text-slate-300">src/games.json</code> file.
-          </p>
-
+          <p class="text-xs text-slate-300 leading-relaxed font-sans font-medium">Copy your current games.json and paste it to save changes permanently.</p>
           <div class="bg-slate-950 border border-slate-850 rounded-2xl p-4 flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-mono font-bold text-slate-450 uppercase tracking-widest">games.json content</span>
-              <button id="copy-sync-json-btn" class="px-2.5 py-1 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-mono font-bold transition-all cursor-pointer">
-                Copy JSON
-              </button>
+              <button id="copy-sync-json-btn" class="px-2.5 py-1 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-mono font-bold transition-all cursor-pointer">Copy JSON</button>
             </div>
             <textarea id="sync-json-textarea" readonly class="w-full h-32 bg-slate-900 border border-slate-850 rounded-xl p-3 text-xs font-mono text-emerald-450 focus:outline-none resize-none no-scrollbar"></textarea>
           </div>
-
-          <div class="flex items-start gap-2 bg-orange-500/10 border border-orange-500/20 p-3 rounded-xl text-[11px] text-orange-200 leading-relaxed">
-            <svg class="w-4 h-4 text-orange-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
-            <p><strong>Instructions:</strong> Click <strong class="text-white">Copy JSON</strong>, then paste it in the AI Chat on the left side with a message like: <em class="text-orange-300 italic">"Save this updated games.json content"</em>. I will commit it for you!</p>
-          </div>
-
           <div class="flex justify-end border-t border-slate-800 pt-4 mt-1">
             <button id="sync-close-cancel-btn" class="px-4 py-2.5 text-xs font-bold uppercase font-mono text-slate-350 bg-slate-800 hover:bg-slate-750 rounded-xl transition-colors cursor-pointer">Close</button>
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- Active dynamic logic script loads -->
+    <!-- App Scripts -->
     <script src="./src/app.js?v=2.6" type="module"></script>
-    
-    <!-- Lucide icons runner -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
+
+    <!-- ADMIN PANEL -->
+    <div id="lockdown-screen" class="hidden fixed inset-0 z-[99999] flex flex-col items-center justify-center" style="background:#0a0a0f;">
+      <div style="text-align:center;padding:2rem;max-width:420px;">
+        <div style="width:72px;height:72px;margin:0 auto 1.5rem;border-radius:50%;background:linear-gradient(135deg,#ff4400,#ff0044);display:flex;align-items:center;justify-content:center;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h1 style="font-family:'Courier New',monospace;font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:0.1em;margin-bottom:0.5rem;">SITE OFFLINE</h1>
+        <p style="font-family:'Courier New',monospace;font-size:0.8rem;color:#666;letter-spacing:0.05em;line-height:1.6;">Under maintenance. Check back later.</p>
+      </div>
+    </div>
+
+    <div id="admin-panel" class="hidden fixed inset-0 z-[99998] flex items-center justify-center" style="background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);">
+      <div style="background:#0f0f17;border:1px solid #2a2a3a;border-radius:16px;padding:2rem;width:320px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;">
+          <div style="width:8px;height:8px;border-radius:50%;background:#ff4400;box-shadow:0 0 8px #ff4400;"></div>
+          <span style="font-family:'Courier New',monospace;font-size:0.7rem;color:#666;letter-spacing:0.15em;text-transform:uppercase;">Admin Terminal</span>
+          <button onclick="closeAdminPanel()" style="margin-left:auto;background:none;border:none;color:#444;cursor:pointer;font-size:1.2rem;">X</button>
+        </div>
+        <div style="background:#1a1a2a;border-radius:8px;padding:0.6rem 0.8rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:8px;">
+          <div id="admin-status-dot" style="width:6px;height:6px;border-radius:50%;background:#00ff88;"></div>
+          <span id="admin-status-text" style="font-family:'Courier New',monospace;font-size:0.7rem;color:#888;letter-spacing:0.1em;">SITE ONLINE</span>
+        </div>
+        <div style="margin-bottom:1rem;">
+          <div style="font-family:'Courier New',monospace;font-size:0.65rem;color:#555;letter-spacing:0.1em;margin-bottom:0.4rem;">ENTER 6-DIGIT CODE</div>
+          <div id="admin-code-display" style="font-family:'Courier New',monospace;font-size:2rem;font-weight:900;color:#fff;letter-spacing:0.3em;background:#1a1a2a;border-radius:8px;padding:0.8rem;text-align:center;border:1px solid #2a2a3a;">- - - - - -</div>
+          <div id="admin-code-error" style="font-family:'Courier New',monospace;font-size:0.65rem;color:#ff4444;margin-top:0.4rem;min-height:1rem;text-align:center;"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem;">
+          <button class="admin-key" onclick="adminKeyPress('1')">1</button><button class="admin-key" onclick="adminKeyPress('2')">2</button><button class="admin-key" onclick="adminKeyPress('3')">3</button>
+          <button class="admin-key" onclick="adminKeyPress('4')">4</button><button class="admin-key" onclick="adminKeyPress('5')">5</button><button class="admin-key" onclick="adminKeyPress('6')">6</button>
+          <button class="admin-key" onclick="adminKeyPress('7')">7</button><button class="admin-key" onclick="adminKeyPress('8')">8</button><button class="admin-key" onclick="adminKeyPress('9')">9</button>
+          <button class="admin-key" onclick="adminKeyDelete()" style="color:#ff6644;">DEL</button>
+          <button class="admin-key" onclick="adminKeyPress('0')">0</button>
+          <button class="admin-key" onclick="adminConfirm()" style="background:linear-gradient(135deg,#ff4400,#ff0044);color:#fff;">OK</button>
+        </div>
+        <div style="font-family:'Courier New',monospace;font-size:0.6rem;color:#333;text-align:center;">TYPE dev! ANYWHERE TO OPEN</div>
+      </div>
+    </div>
+
+    <style>
+      .admin-key{background:#1a1a2a;border:1px solid #2a2a3a;border-radius:8px;color:#ccc;font-family:'Courier New',monospace;font-size:1.1rem;font-weight:700;padding:0.8rem;cursor:pointer;transition:background 0.15s,transform 0.1s;}
+      .admin-key:hover{background:#252535;}
+      .admin-key:active{transform:scale(0.94);}
+    </style>
+
     <script>
-      lucide.createIcons();
+      var _adminCode="",_adminLocked=false,_adminKeyBuffer="";
+      window.adminKeyPress=function(d){if(_adminCode.length>=6)return;_adminCode+=d;_adminUpdateDisplay();};
+      window.adminKeyDelete=function(){_adminCode=_adminCode.slice(0,-1);_adminUpdateDisplay();document.getElementById("admin-code-error").textContent="";};
+      window.adminConfirm=async function(){
+        if(_adminCode.length<6){document.getElementById("admin-code-error").textContent="Enter full 6-digit code";setTimeout(function(){document.getElementById("admin-code-error").textContent="";},2000);return;}
+        if(!window._adminSetDoc){document.getElementById("admin-code-error").textContent="Not connected";return;}
+        if(_adminCode===window._ADMIN_LOCK_CODE&&!_adminLocked){await window._adminSetDoc({locked:true});_adminCode="";_adminUpdateDisplay();}
+        else if(_adminCode===window._ADMIN_UNLOCK_CODE&&_adminLocked){await window._adminSetDoc({locked:false});_adminCode="";_adminUpdateDisplay();}
+        else{document.getElementById("admin-code-error").textContent="Invalid code";setTimeout(function(){document.getElementById("admin-code-error").textContent="";},2000);_adminCode="";_adminUpdateDisplay();}
+      };
+      window.toggleAdminPanel=function(){var p=document.getElementById("admin-panel");p.classList.toggle("hidden");if(!p.classList.contains("hidden")){_adminCode="";_adminUpdateDisplay();document.getElementById("admin-code-error").textContent="";}};
+      window.closeAdminPanel=function(){document.getElementById("admin-panel").classList.add("hidden");};
+      function _adminUpdateDisplay(){var d=document.getElementById("admin-code-display");var f=_adminCode.split("").map(function(){return"●";}).join(" ");var e=Array(6-_adminCode.length).fill("-").join(" ");d.textContent=f+(f&&e?" ":"")+e;}
+      document.addEventListener("click",function(e){var p=document.getElementById("admin-panel");if(p&&e.target===p)closeAdminPanel();});
+      document.addEventListener("keydown",function(e){
+        if(e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA")return;
+        var p=document.getElementById("admin-panel");
+        var open=p&&!p.classList.contains("hidden");
+        if(open){
+          if(e.key>="0"&&e.key<="9"){adminKeyPress(e.key);return;}
+          if(e.key==="Backspace"){adminKeyDelete();return;}
+          if(e.key==="Enter"){adminConfirm();return;}
+          if(e.key==="Escape"){closeAdminPanel();return;}
+          return;
+        }
+        if(e.key==="Shift")return;
+        _adminKeyBuffer+=e.key;
+        if(_adminKeyBuffer.length>4)_adminKeyBuffer=_adminKeyBuffer.slice(-4);
+        if(_adminKeyBuffer==="dev!"){_adminKeyBuffer="";toggleAdminPanel();}
+      });
     </script>
+
+    <script type="module">
+      import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+      import{getFirestore,doc,onSnapshot,setDoc}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+      window._ADMIN_LOCK_CODE="978517";
+      window._ADMIN_UNLOCK_CODE="123456";
+      async function bootAdmin(){
+        try{
+          const r=await fetch('/UnblockedXYZ/firebase-applet-config.json');
+          const cfg=await r.json();
+          const apps=getApps();
+          const app=apps.length?apps[0]:initializeApp(cfg,"admin");
+          const db=getFirestore(app);
+          const ref=doc(db,"admin","lockdown");
+          window._adminSetDoc=async function(data){await setDoc(ref,data);};
+          onSnapshot(ref,(snap)=>{
+            const locked=snap.exists()?snap.data().locked===true:false;
+            window._adminLocked=locked;
+            const s=document.getElementById("lockdown-screen");
+            const dot=document.getElementById("admin-status-dot");
+            const txt=document.getElementById("admin-status-text");
+            if(locked){s.classList.remove("hidden");dot.style.background="#ff4400";dot.style.boxShadow="0 0 8px #ff4400";txt.textContent="SITE OFFLINE";txt.style.color="#ff6644";}
+            else{s.classList.add("hidden");dot.style.background="#00ff88";dot.style.boxShadow="0 0 8px #00ff88";txt.textContent="SITE ONLINE";txt.style.color="#00cc66";}
+          });
+        }catch(e){console.warn("Admin error",e);}
+      }
+      bootAdmin();
+    </script>
+
   </body>
 </html>
