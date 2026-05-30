@@ -1,5 +1,3 @@
-import defaultGames from './games.json';
-
 /**
  * Unblocked games catalog and action state engine.
  * Vanilla JS client implementation for lightweight, 100% unblocked performance.
@@ -120,6 +118,27 @@ async function initApp() {
 
   // Fetch games from JSON
   try {
+    let defaultGames = [];
+    try {
+      const response = await fetch('./src/games.json?t=' + Date.now());
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      defaultGames = await response.json();
+    } catch (e1) {
+      try {
+        const response2 = await fetch('src/games.json?t=' + Date.now());
+        if (!response2.ok) throw new Error(`HTTP error! status: ${response2.status}`);
+        defaultGames = await response2.json();
+      } catch (e2) {
+        try {
+          const response3 = await fetch('./games.json?t=' + Date.now());
+          if (!response3.ok) throw new Error(`HTTP error! status: ${response3.status}`);
+          defaultGames = await response3.json();
+        } catch (e3) {
+          console.error('All fetch attempts failed:', e1, e2, e3);
+        }
+      }
+    }
+
     // Fetch custom user added games
     let customGames = [];
     try {
