@@ -50,31 +50,4 @@
     "color": "from-orange-500 to-red-600",
     "thumbnailUrl": "https://i.ibb.co/PG23ThWR/Subway-Surfersthumb-m240x144.jpg",
     "thumbnailFit": "contain"
-  },
-  {
-    "id": "smash-karts",
-    "title": "Smash Karts",
-    "description": "An intense 3D multiplayer kart battle arena game. Drive fast, collect power-ups, and blow up rival karts to claim victory!",
-    "iframeUrl": "https://smashkarts.io",
-    "category": "Arcade",
-    "icon": "Car",
-    "instructions": "Use WASD or Arrow keys to steer your kart. Press Spacebar to fire weapons and deploy wacky explosive power-ups collected from boxes.",
-    "credits": "Tall Team",
-    "color": "from-red-600 to-amber-500",
-    "thumbnailUrl": "https://i.ibb.co/JRQwLyCs/Smash-karts-Thumbnail.avif",
-    "thumbnailFit": "cover"
-  },
-  {
-    "id": "gulper-io",
-    "title": "Gulper.io",
-    "description": "A competitive multiplayer snake game where you control a glowing worm, battle other players in a neon arena, and collect glowing orbs to grow massive!",
-    "iframeUrl": "https://gulper.io/?isNewUser=false&__nextLocale=en-US",
-    "category": "Arcade",
-    "icon": "Gamepad",
-    "instructions": "Use your mouse pointer to guide your worm. Hold Left Mouse Click or Spacebar to boost speed at the cost of your length. Cut off other players to eliminate them and absorb their energy!",
-    "credits": "Gulper.io Team",
-    "color": "from-cyan-500 to-blue-600",
-    "thumbnailUrl": "https://i.ibb.co/Y7Dq915K/gulper-io-thumbnail.avif",
-    "thumbnailFit": "cover"
   }
-]
