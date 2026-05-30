@@ -652,7 +652,7 @@ function renderActiveGrid() {
         </div>
         
         ${game.thumbnailUrl ? `
-          <img src="${escapeHTML(game.thumbnailUrl)}" alt="${escapeHTML(game.title)}" class="w-full h-full ${game.thumbnailFit === 'contain' ? 'object-contain bg-slate-950/95 p-1' : 'object-cover'} transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <img src="${escapeHTML(game.thumbnailUrl)}" alt="${escapeHTML(game.title)}" referrerpolicy="no-referrer" class="w-full h-full ${game.thumbnailFit === 'contain' ? 'object-contain bg-slate-950/95 p-1' : 'object-cover'} transition-transform duration-500 group-hover:scale-105" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
           <div class="absolute inset-0 flex items-center justify-center bg-gradient-to-br ${gradientColor} opacity-75 hidden">
             ${getIconSVG(game.icon, 'w-10 h-10 text-white')}
           </div>
