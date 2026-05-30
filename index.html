@@ -735,7 +735,11 @@
           if (passInput) passInput.value = "";
           window.xyzCloseModal();
         } catch (e) {
-          xyzErr(friendlyError(e.code || e.message));
+          if (e.message === "USERNAME_TAKEN") {
+  xyzErr("That username is already taken. Please choose another.");
+} else {
+  xyzErr(friendlyError(e.code || e.message));
+}
         }
       };
 
