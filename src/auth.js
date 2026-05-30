@@ -68,7 +68,7 @@ export function initials(name) {
 // Dynamics initializer
 export async function setupFirebase() {
   try {
-    const response = await fetch('/UnblockedXYZ/firebase-applet-config.json');
+    const response = await fetch('/firebase-applet-config.json');
     const firebaseConfig = await response.json();
 
     if (!firebaseConfig || firebaseConfig.apiKey === "PLACEHOLDER_API_KEY") {

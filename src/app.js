@@ -454,7 +454,7 @@ function renderUI() {
       featuredBtn.textContent = "PLAY GAME";
       const newBtn = featuredBtn.cloneNode(true);
       featuredBtn.parentNode.replaceChild(newBtn, featuredBtn);
-      newBtn.addEventListener('click', () => launchGame(featuredGame));
+      newBtn.setAttribute('onclick', `xyzTrackPlay(); playGame('${featuredGame.id}')`);
     }
   } else {
     const featuredCategory = document.getElementById('featured-game-category');
@@ -490,18 +490,11 @@ function renderUI() {
     const has2048 = gamesData.some(g => g.id === '2048');
     if (has2048) {
       newBtn.textContent = "LOAD 2048";
+      newBtn.setAttribute('onclick', "xyzTrackPlay(); playGame('2048')");
     } else {
       newBtn.textContent = "IMPORT GAME";
+      newBtn.addEventListener('click', () => openSubmitModal());
     }
-
-    newBtn.addEventListener('click', () => {
-      const match = gamesData.find(g => g.id === '2048');
-      if (match) {
-        launchGame(match);
-      } else {
-        openSubmitModal();
-      }
-    });
   }
 
   // 3. Render Recents Tray
@@ -917,6 +910,30 @@ function launchGame(game) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// Global window registration for playing games securely with individual account statistics tracking
+window.playGame = (gameId) => {
+  if (!gamesData || gamesData.length === 0) {
+    console.warn("Games data not fully initialized yet.");
+    return;
+  }
+
+  let targetGame = null;
+  if (!gameId) {
+    // Default to the featured game or the first available game in the database
+    targetGame = gamesData.find(g => g.id === 'html5-snake') || gamesData[0];
+  } else if (typeof gameId === 'object') {
+    targetGame = gameId;
+  } else {
+    targetGame = gamesData.find(g => g.id === gameId);
+  }
+
+  if (targetGame) {
+    launchGame(targetGame);
+  } else {
+    console.error(`Cannot play game - invalid game parameter or ID: ${gameId}`);
+  }
+};
+
 function closeSelectedGame() {
   selectedGame = null;
   document.getElementById('game-play-arena-layout').classList.add('hidden');
@@ -1003,6 +1020,15 @@ function setupArenaView(game) {
         <p class="text-xs text-slate-400 mt-2 max-w-xs font-mono font-light">Preparing secure unblocked sandbox container to fetch web assets</p>
         <div class="w-48 h-1.5 bg-slate-800 rounded-full mt-6 overflow-hidden">
           <div class="w-full h-full bg-gradient-to-r ${gradientColor} origin-left animate-pulse"></div>
+        </div>
+        
+        <!-- Account progress save warning card block -->
+        <div class="mt-8 max-w-xs bg-rose-950/40 border border-rose-500/20 backdrop-blur-md rounded-2xl p-4 flex items-start gap-3 text-left">
+          <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <div class="text-[11px] text-rose-200 leading-relaxed">
+            <span class="font-bold text-rose-300 block mb-0.5 text-xs">⚠️ Progress is NOT saved</span>
+            Active game saves, level progression, and local achievements are preserved in your temporary browser cache only and will not persist to your cloud account.
+          </div>
         </div>
       </div>
 

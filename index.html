@@ -148,9 +148,22 @@
               <div id="play-arena-frame-viewport-container" class="w-full h-full"></div>
             </div>
             
-            <div class="flex items-center gap-3 bg-orange-950/20 border border-orange-500/10 rounded-xl p-3 text-xs text-orange-300">
-              <svg class="w-4 h-4 text-orange-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
-              <p><strong>Pro-tip:</strong> If game fails to read keys, click once directly inside the game window simulation boundary to focus active controller input.</p>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <div class="flex-1 flex items-start gap-3 bg-rose-950/20 border border-rose-500/15 rounded-2xl p-4 text-xs text-rose-350">
+                <svg class="w-5 h-5 text-rose-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                <div>
+                  <h4 class="font-bold text-sm text-rose-400 mb-0.5">⚠️ No Account Cloud Saves</h4>
+                  <p class="leading-relaxed text-rose-200">Because games run in an isolated browser sandbox, <strong>progress, custom levels, and high scores are NOT saved to your account database</strong>. Refreshing or exiting the game resets your session.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3 bg-orange-950/15 border border-orange-500/10 rounded-2xl p-4 text-xs text-orange-200 sm:max-w-xs shrink-0 h-fit">
+                <svg class="w-5 h-5 text-orange-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
+                <div>
+                  <h4 class="font-bold text-orange-300">Needs input focus?</h4>
+                  <p class="text-[11px] text-slate-300 mt-0.5">Click directly inside the game container to capture keyboard & mouse controls.</p>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -223,6 +236,7 @@
               <div>
                 <button 
                   id="featured-play-btn"
+                  onclick="xyzTrackPlay(); playGame()"
                   class="bg-white text-slate-950 font-extrabold text-xs py-3 px-6 rounded-xl hover:bg-slate-200 transition-colors cursor-pointer uppercase tracking-wider shadow-lg shadow-black/10 font-sans"
                 >
                   PLAY GAME
@@ -628,6 +642,14 @@
         incrementGamesPlayed,
         getUserProfile
       } from "./src/auth.js";
+
+      // Earliest safe placeholders to prevent early runtime onclick failures
+      window.xyzTrackPlay = window.xyzTrackPlay || (async () => {
+        console.debug("xyzTrackPlay placeholder executed.");
+      });
+      window.playGame = window.playGame || ((gameId) => {
+        console.debug("playGame placeholder executed.");
+      });
 
       // Global window binding interface so regular HTML binds can interact natively
       window.xyzOpenModal = () => {
