@@ -728,6 +728,7 @@
       window._ADMIN_UNLOCK_CODE="123456";
       async function bootAdmin(){
         try{
+          document.body.style.visibility='hidden';
           const r=await fetch('/UnblockedXYZ/firebase-applet-config.json');
           const cfg=await r.json();
           const apps=getApps();
@@ -743,6 +744,7 @@
             const txt=document.getElementById("admin-status-text");
             if(locked){s.classList.remove("hidden");dot.style.background="#ff4400";dot.style.boxShadow="0 0 8px #ff4400";txt.textContent="SITE OFFLINE";txt.style.color="#ff6644";}
             else{s.classList.add("hidden");dot.style.background="#00ff88";dot.style.boxShadow="0 0 8px #00ff88";txt.textContent="SITE ONLINE";txt.style.color="#00cc66";}
+            document.body.style.visibility='visible';
           });
         }catch(e){console.warn("Admin error",e);}
       }
