@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User account profile tracking gameplay for UnblockedXYZ",
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "The custom nickname of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "Verified user email"
+        },
+        "avatarColor": {
+          "type": "string",
+          "description": "Hex color code for avatar backdrop"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the profile was created"
+        },
+        "gamesPlayed": {
+          "type": "integer",
+          "description": "Count of times the user has clicked play on a game"
+        }
+      },
+      "required": ["username", "email", "avatarColor", "createdAt", "gamesPlayed"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles linked by Auth userId"
+    }
+  }
+}

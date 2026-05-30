@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // User Schema Validation (The "Anti-Update-Gap")
+    function isValidUser(data) {
+      return data.keys().hasAll(['username', 'email', 'avatarColor', 'createdAt', 'gamesPlayed'])
+        && data.keys().size() == 5
+        && data.username is string
+        && data.username.size() >= 3
+        && data.username.size() <= 20
+        && data.email is string
+        && data.email.size() <= 128
+        && data.avatarColor is string
+        && data.avatarColor.size() <= 7
+        && data.gamesPlayed is int
+        && data.gamesPlayed >= 0
+        && data.createdAt == request.time;
+    }
+
+    // Update validation restricting modifications to roles / profile fields
+    function isValidUserUpdate(existing, incoming) {
+      return incoming.username is string
+        && incoming.username.size() >= 3
+        && incoming.username.size() <= 20
+        && incoming.email == existing.email
+        && incoming.avatarColor == existing.avatarColor
+        && incoming.createdAt == existing.createdAt
+        && incoming.gamesPlayed is int
+        && incoming.gamesPlayed >= existing.gamesPlayed;
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId)
+                    && isValidId(userId)
+                    && isValidUser(request.resource.data);
+      allow update: if isOwner(userId)
+                    && isValidId(userId)
+                    && isValidUserUpdate(resource.data, request.resource.data)
+                    && (
+                      // Action-Based Update: Change username
+                      (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['username']))
+                      ||
+                      // Action-Based Update: Increment games played
+                      (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['gamesPlayed']))
+                    );
+    }
+  }
+}

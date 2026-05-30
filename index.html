@@ -86,6 +86,11 @@
 
       <!-- Global Control Area -->
       <div class="flex items-center gap-3">
+        <!-- Account Status Button -->
+        <button id="account-btn" class="flex items-center gap-2.5 bg-slate-900/60 border border-slate-800/80 hover:border-orange-500/50 rounded-full px-3.5 py-1.5 cursor-pointer text-xs font-semibold font-sans hover:bg-orange-500/10 transition-all select-none duration-250">
+          <span id="nav-av" class="w-6 h-6 rounded-full bg-orange-600 text-white font-bold text-[10px] flex items-center justify-center tracking-tight shadow-md shadow-orange-700/20">?</span>
+          <span id="nav-label" class="text-slate-300 font-bold uppercase font-mono tracking-wider max-w-[80px] sm:max-w-[124px] truncate">Sign in</span>
+        </button>
       </div>
     </header>
 
@@ -503,6 +508,349 @@
       </div>
     </div>
 
+    <!-- User Account System Modal (Hidden by default) -->
+    <div id="xyz-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+      <div id="xyz-modal" class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden">
+        
+        <!-- Modal Heading -->
+        <div class="px-6 py-5 border-b border-slate-805 flex items-center justify-between bg-slate-900/40">
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 rounded-lg bg-orange-500/10 text-orange-400">
+              <svg class="w-5 h-5 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <h3 id="xyz-modal-title" class="text-base font-bold text-white font-display">Account Hub</h3>
+              <p id="xyz-modal-subtitle" class="text-xs text-slate-400">Track stats & sync customizations</p>
+            </div>
+          </div>
+          <button id="xyz-close" onclick="xyzCloseModal()" class="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-750 hover:text-white transition-colors cursor-pointer">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Auth Forms Block -->
+        <div id="auth-forms" class="p-6 flex flex-col gap-4">
+          <div class="xyz-tabs flex p-1 bg-slate-955 border border-slate-850 rounded-xl">
+            <button id="xyz-tab-login" class="flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-white bg-slate-800" onclick="xyzTab('login')">Sign In</button>
+            <button id="xyz-tab-register" class="flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-slate-400 hover:bg-slate-900 hover:text-white" onclick="xyzTab('register')">Register</button>
+          </div>
+
+          <!-- Error Alert Banner -->
+          <div id="xyz-err" class="hidden p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-300 leading-relaxed max-h-24 overflow-y-auto no-scrollbar">
+          </div>
+
+          <!-- Email/Password Login Form -->
+          <div id="xyz-login" class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wide">Email Address</label>
+              <input type="email" id="li-email" placeholder="you@example.com" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wide">Password</label>
+              <input type="password" id="li-pass" placeholder="••••••••" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
+            </div>
+            <button id="xyz-login-btn" onclick="xyzLogin()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-white bg-gradient-to-r from-orange-600 to-red-600 hover:brightness-110 rounded-xl shadow-lg shadow-orange-950/40 transition-all cursor-pointer mt-2">Sign In with Email</button>
+          </div>
+
+          <!-- Email/Password Registration Form -->
+          <div id="xyz-register" class="hidden flex flex-col gap-3">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wide">Username</label>
+              <input type="text" id="re-name" placeholder="SuperGamer" maxlength="20" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wide">Email Address</label>
+              <input type="email" id="re-email" placeholder="you@example.com" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wide">Password</label>
+              <input type="password" id="re-pass" placeholder="At least 6 characters" class="w-full bg-slate-950 text-slate-100 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500/50 transition-colors" />
+            </div>
+            <button id="xyz-register-btn" onclick="xyzRegister()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:brightness-110 rounded-xl shadow-lg shadow-green-950/40 transition-all cursor-pointer mt-2">Create Account</button>
+          </div>
+
+          <!-- Easy Google Sign-In (Highly Preferred standard) -->
+          <div class="flex items-center my-1 select-none">
+            <div class="flex-grow border-t border-slate-800/80"></div>
+            <span class="px-3 text-[10px] font-mono font-bold text-slate-500 uppercase">Or Continue With</span>
+            <div class="flex-grow border-t border-slate-800/80"></div>
+          </div>
+
+          <button onclick="xyzGoogleSignIn()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-slate-200 bg-slate-850 hover:bg-slate-800 border border-slate-800 hover:border-slate-705 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 select-none">
+            <svg class="w-4 h-4 text-orange-500" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/></svg>
+            Sign In with Google
+          </button>
+        </div>
+
+        <!-- Profile Detail View (Shown when logged in) -->
+        <div id="profile-view" class="hidden p-6 flex flex-col gap-5">
+          <div class="flex items-center gap-4 bg-slate-955 border border-slate-850 rounded-2xl p-4">
+            <div id="pv-av" class="w-12 h-12 rounded-full border border-orange-500/30 flex items-center justify-center font-black text-sm text-white shadow-lg shadow-orange-950/20 select-none">
+              ?
+            </div>
+            <div class="flex-grow min-w-0">
+              <h4 id="pv-name" class="font-bold text-white text-sm truncate">Gamer</h4>
+              <p id="pv-email" class="text-xs text-slate-500 font-mono tracking-tight truncate mt-0.5">user@mail.com</p>
+            </div>
+          </div>
+
+          <!-- Statistics Cards Grid layout -->
+          <div class="grid grid-cols-2 gap-3.5">
+            <div class="bg-slate-950 border border-slate-850 rounded-2xl p-4 text-center group hover:border-orange-500/20 transition-all">
+              <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest block">Games Played</span>
+              <span id="pv-played" class="text-2xl font-black text-orange-500 tracking-tight block mt-1">0</span>
+            </div>
+            <div class="bg-slate-955 border border-slate-850 rounded-2xl p-4 text-center group hover:border-emerald-500/20 transition-all">
+              <span class="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-widest block">Member Since</span>
+              <span id="pv-since" class="text-xs font-black text-emerald-500 block uppercase font-mono mt-3">May 2026</span>
+            </div>
+          </div>
+
+          <!-- Action dialog control buttons -->
+          <div class="flex flex-col gap-2 border-t border-slate-800 pt-5 mt-2">
+            <button onclick="xyzCloseModal()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-slate-300 bg-slate-800 hover:bg-slate-750 rounded-xl transition-all cursor-pointer">Continue Playing</button>
+            <button onclick="xyzLogout()" class="w-full py-2.5 text-xs font-bold uppercase font-mono text-rose-500 border border-slate-800 hover:bg-rose-950 hover:text-rose-400 rounded-xl transition-all cursor-pointer">Sign Out</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Interface scripts bridge to auth system ESM -->
+    <script type="module">
+      import {
+        setupFirebase,
+        registerUser,
+        loginUser,
+        loginUserWithGoogle,
+        logoutUser,
+        onUserChanged,
+        incrementGamesPlayed,
+        getUserProfile
+      } from "./src/auth.js";
+
+      // Global window binding interface so regular HTML binds can interact natively
+      window.xyzOpenModal = () => {
+        const overlay = document.getElementById("xyz-overlay");
+        if (overlay) overlay.classList.remove("hidden");
+      };
+
+      window.xyzCloseModal = () => {
+        const overlay = document.getElementById("xyz-overlay");
+        if (overlay) overlay.classList.add("hidden");
+        xyzClearErr();
+      };
+
+      window.xyzTab = (tab) => {
+        const loginForm = document.getElementById("xyz-login");
+        const registerForm = document.getElementById("xyz-register");
+        const tabLogin = document.getElementById("xyz-tab-login");
+        const tabRegister = document.getElementById("xyz-tab-register");
+
+        if (tab === "login") {
+          loginForm.classList.remove("hidden");
+          registerForm.classList.add("hidden");
+          tabLogin.className = "flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-white bg-slate-800";
+          tabRegister.className = "flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-slate-400 hover:bg-slate-900 hover:text-white";
+        } else {
+          loginForm.classList.add("hidden");
+          registerForm.classList.remove("hidden");
+          tabLogin.className = "flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-slate-400 hover:bg-slate-900 hover:text-white";
+          tabRegister.className = "flex-1 py-1.5 text-xs font-bold uppercase font-mono rounded-lg transition-all text-white bg-slate-800";
+        }
+        xyzClearErr();
+      };
+
+      // Handle UI Error feedback
+      function xyzErr(msg) {
+        const errAlert = document.getElementById("xyz-err");
+        if (errAlert) {
+          errAlert.textContent = msg;
+          errAlert.classList.remove("hidden");
+        }
+      }
+
+      function xyzClearErr() {
+        const errAlert = document.getElementById("xyz-err");
+        if (errAlert) {
+          errAlert.classList.add("hidden");
+        }
+      }
+
+      function friendlyError(code) {
+        const map = {
+          "auth/email-already-in-use": "That email is already registered. Try signing in.",
+          "auth/invalid-email":        "Please enter a valid email address.",
+          "auth/wrong-password":       "Incorrect password. Try again.",
+          "auth/user-not-found":       "No account with that email. Register instead?",
+          "auth/weak-password":        "Password should be at least 6 characters.",
+          "auth/too-many-requests":    "Too many attempts. Please wait a moment.",
+          "auth/invalid-credential":   "Email or password is incorrect.",
+        };
+        return map[code] || code || "Something went wrong. Please try again.";
+      }
+
+      // Action Handlers
+      window.xyzRegister = async () => {
+        const nameInput = document.getElementById("re-name");
+        const emailInput = document.getElementById("re-email");
+        const passInput = document.getElementById("re-pass");
+
+        const username = nameInput ? nameInput.value.trim() : "";
+        const email = emailInput ? emailInput.value.trim() : "";
+        const password = passInput ? passInput.value : "";
+
+        xyzClearErr();
+        if (!username) return xyzErr("Please enter a username.");
+        if (username.length < 3) return xyzErr("Username must be at least 3 characters.");
+        if (!email) return xyzErr("Please enter your email.");
+        if (!password || password.length < 6) return xyzErr("Password must be at least 6 characters.");
+
+        try {
+          await registerUser(username, email, password);
+          if (nameInput) nameInput.value = "";
+          if (emailInput) emailInput.value = "";
+          if (passInput) passInput.value = "";
+          window.xyzCloseModal();
+        } catch (e) {
+          xyzErr(friendlyError(e.code || e.message));
+        }
+      };
+
+      window.xyzLogin = async () => {
+        const emailInput = document.getElementById("li-email");
+        const passInput = document.getElementById("li-pass");
+
+        const email = emailInput ? emailInput.value.trim() : "";
+        const password = passInput ? passInput.value : "";
+
+        xyzClearErr();
+        if (!email) return xyzErr("Please enter your email.");
+        if (!password) return xyzErr("Please enter your password.");
+
+        try {
+          await loginUser(email, password);
+          if (emailInput) emailInput.value = "";
+          if (passInput) passInput.value = "";
+          window.xyzCloseModal();
+        } catch (e) {
+          xyzErr(friendlyError(e.code || e.message));
+        }
+      };
+
+      window.xyzGoogleSignIn = async () => {
+        xyzClearErr();
+        try {
+          await loginUserWithGoogle();
+          window.xyzCloseModal();
+        } catch (e) {
+          xyzErr(friendlyError(e.code || e.message));
+        }
+      };
+
+      window.xyzLogout = async () => {
+        try {
+          await logoutUser();
+          window.xyzCloseModal();
+        } catch (e) {
+          console.error("Signout failed: ", e);
+        }
+      };
+
+      // Bootstrap initialization check
+      setupFirebase().then((state) => {
+        const accountBtn = document.getElementById("account-btn");
+        if (accountBtn) {
+          accountBtn.addEventListener("click", () => {
+            window.xyzOpenModal();
+          });
+        }
+
+        if (state.isConfigured) {
+          onUserChanged((user) => {
+            const navAv = document.getElementById("nav-av");
+            const navLabel = document.getElementById("nav-label");
+            const authForms = document.getElementById("auth-forms");
+            const profileView = document.getElementById("profile-view");
+
+            if (user) {
+              // Logged in
+              const color = window._pickColor(user.uid);
+              const initialsText = window._initials(user.displayName || "Gamer");
+
+              if (navAv) {
+                navAv.textContent = initialsText;
+                navAv.style.backgroundColor = color;
+              }
+              if (navLabel) {
+                navLabel.textContent = user.displayName || "Gamer";
+              }
+
+              // Sync forms visibility
+              if (authForms) authForms.classList.add("hidden");
+              if (profileView) profileView.classList.remove("hidden");
+
+              // Load extra data from firestore
+              getUserProfile(user.uid).then((data) => {
+                if (data) {
+                  const pvAv = document.getElementById("pv-av");
+                  const pvName = document.getElementById("pv-name");
+                  const pvEmail = document.getElementById("pv-email");
+                  const pvPlayed = document.getElementById("pv-played");
+                  const pvSince = document.getElementById("pv-since");
+
+                  if (pvAv) {
+                    pvAv.textContent = window._initials(data.username || "Gamer");
+                    pvAv.style.backgroundColor = data.avatarColor || color;
+                  }
+                  if (pvName) pvName.textContent = data.username || "Gamer";
+                  if (pvEmail) pvEmail.textContent = user.email;
+                  if (pvPlayed) pvPlayed.textContent = data.gamesPlayed || 0;
+
+                  if (pvSince && data.createdAt) {
+                    let d;
+                    if (typeof data.createdAt.toDate === "function") {
+                      d = data.createdAt.toDate();
+                    } else {
+                      d = new Date(data.createdAt);
+                    }
+                    pvSince.textContent = d.toLocaleString("default", { month: "short", year: "numeric" });
+                  }
+                }
+              });
+
+            } else {
+              // Logged out
+              if (navAv) {
+                navAv.textContent = "?";
+                navAv.style.backgroundColor = "#E85D2B";
+              }
+              if (navLabel) {
+                navLabel.textContent = "Sign in";
+              }
+
+              if (authForms) authForms.classList.remove("hidden");
+              if (profileView) profileView.classList.add("hidden");
+            }
+          });
+
+          // Interface bridge to increment gameplay on request
+          window.xyzTrackPlay = async () => {
+            const user = window._xyzAuth?.currentUser;
+            if (user) {
+              await incrementGamesPlayed(user.uid);
+            }
+          };
+        } else {
+          // Fallback interface if credentials are missing
+          console.info("Running UnblockedXYZ in sandbox offline profile mode.");
+          window.xyzTrackPlay = async () => {
+            // No-op or local sandbox mock increment
+          };
+        }
+      });
+    </script>
+
     <!-- Codebase Sync Modal (Hidden by default) -->
     <div id="sync-codebase-modal-ambient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
       <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden">
@@ -551,7 +899,7 @@
     </div>
 
     <!-- Active dynamic logic script loads -->
-    <script src="./src/app.js?v=2.6"></script>
+    <script src="./src/app.js?v=2.6" type="module"></script>
     
     <!-- Lucide icons runner -->
     <script src="https://unpkg.com/lucide@latest"></script>

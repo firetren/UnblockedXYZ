@@ -900,6 +900,11 @@ function launchGame(game) {
   recentPlays = updatedRecent;
   localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(updatedRecent));
 
+  // If matching active Firebase profile, auto-track play statistics
+  if (typeof window.xyzTrackPlay === 'function') {
+    window.xyzTrackPlay();
+  }
+
   // Swap Screen element displays
   document.getElementById('homescreen-browser-layout').classList.add('hidden');
   const arena = document.getElementById('game-play-arena-layout');
