@@ -238,6 +238,43 @@ function setupEventListeners() {
   if (closeEditBtn) closeEditBtn.addEventListener('click', closeEditThumbnailModal);
   if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditThumbnailModal);
 
+  // Codebase Sync Modal listeners
+  const triggerSyncBtn = document.getElementById('trigger-sync-modal');
+  const closeSyncBtn = document.getElementById('close-sync-modal-btn');
+  const cancelSyncBtn = document.getElementById('sync-close-cancel-btn');
+  const copySyncBtn = document.getElementById('copy-sync-json-btn');
+
+  if (triggerSyncBtn) {
+    triggerSyncBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openSyncCodebaseModal();
+    });
+  }
+  if (closeSyncBtn) closeSyncBtn.addEventListener('click', closeSyncCodebaseModal);
+  if (cancelSyncBtn) cancelSyncBtn.addEventListener('click', closeSyncCodebaseModal);
+  if (copySyncBtn) {
+    copySyncBtn.addEventListener('click', () => {
+      const textarea = document.getElementById('sync-json-textarea');
+      if (textarea) {
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(textarea.value).then(() => {
+          const originalText = copySyncBtn.textContent;
+          copySyncBtn.textContent = 'COPIED!';
+          copySyncBtn.style.backgroundColor = '#10b981';
+          copySyncBtn.style.color = '#ffffff';
+          setTimeout(() => {
+            copySyncBtn.textContent = originalText;
+            copySyncBtn.style.backgroundColor = '';
+            copySyncBtn.style.color = '';
+          }, 2000);
+        }).catch(err => {
+          console.error('Failed to copy', err);
+        });
+      }
+    });
+  }
+
   const editThumbnailForm = document.getElementById('edit-thumbnail-form');
   if (editThumbnailForm) {
     editThumbnailForm.addEventListener('submit', (e) => {
@@ -1145,6 +1182,49 @@ function openSubmitModal() {
 
 function closeSubmitModal() {
   const modal = document.getElementById('add-game-modal-ambient');
+  if (modal) {
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  }
+}
+
+/**
+ * Codebase Sync Modal controls
+ */
+function openSyncCodebaseModal() {
+  const modal = document.getElementById('sync-codebase-modal-ambient');
+  const textarea = document.getElementById('sync-json-textarea');
+  if (modal) {
+    const baseGames = gamesData.filter(g => !g.custom).map(game => {
+      const cleanGame = {
+        id: game.id,
+        title: game.title,
+        description: game.description,
+        iframeUrl: game.iframeUrl,
+        category: game.category,
+        icon: game.icon,
+        instructions: game.instructions,
+        credits: game.credits,
+        color: game.color,
+        thumbnailUrl: game.thumbnailUrl
+      };
+      if (game.thumbnailFit) {
+        cleanGame.thumbnailFit = game.thumbnailFit;
+      }
+      return cleanGame;
+    });
+
+    if (textarea) {
+      textarea.value = JSON.stringify(baseGames, null, 2);
+    }
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeSyncCodebaseModal() {
+  const modal = document.getElementById('sync-codebase-modal-ambient');
   if (modal) {
     modal.classList.add('hidden');
     document.body.style.overflow = 'auto';

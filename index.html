@@ -325,9 +325,13 @@
     <!-- Adheres to design margins: styled footer aligned with theme -->
     <footer class="h-16 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between px-8 text-[10px] text-slate-500 uppercase tracking-tighter bg-slate-950/60 shrink-0 py-4 sm:py-0 text-center gap-2 font-mono">
       <div>&copy; 2026 UNBLOCKEDXYZ NETWORKS</div>
-      <div class="flex flex-wrap gap-4 sm:gap-6 justify-center">
-        <span class="hover:text-white transition-colors cursor-pointer">Offline Browser Cache</span>
-        <span class="hover:text-white transition-colors cursor-pointer">Sandbox Security Layer</span>
+      <div class="flex flex-wrap gap-4 sm:gap-6 justify-center items-center">
+        <span id="trigger-sync-modal" class="hover:text-white transition-all duration-200 cursor-pointer border border-slate-800 hover:border-slate-600 px-3 py-1 rounded-xl bg-slate-900/40 font-bold tracking-wider flex items-center gap-1.5 active:scale-95">
+          <span class="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></span>
+          Sync Codebase
+        </span>
+        <span class="hover:text-white transition-colors cursor-pointer hidden sm:inline">Offline Browser Cache</span>
+        <span class="hover:text-white transition-colors cursor-pointer hidden sm:inline">Sandbox Security Layer</span>
         <div class="flex items-center gap-2 font-bold">
           <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
           GRID OPERATIONAL
@@ -429,7 +433,6 @@
 
       </div>
     </div>
-
     <!-- Edit Thumbnail Modal (Hidden by default) -->
     <div id="edit-thumbnail-modal-ambient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
       <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden">
@@ -492,6 +495,53 @@
             </div>
           </div>
         </form>
+
+      </div>
+    </div>
+
+    <!-- Codebase Sync Modal (Hidden by default) -->
+    <div id="sync-codebase-modal-ambient" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+      <div class="w-full max-w-lg bg-slate-900 border border-slate-800 rounded-3xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden">
+        
+        <div class="px-6 py-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/40">
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 rounded-lg bg-orange-500/10 text-orange-400">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white font-display">Codebase Sync Helper</h3>
+              <p class="text-xs text-slate-400">Save custom edits permanently inside GitHub repo</p>
+            </div>
+          </div>
+          <button id="close-sync-modal-btn" class="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-750 hover:text-white transition-colors cursor-pointer">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <div class="p-6 flex flex-col gap-4">
+          <p class="text-xs text-slate-300 leading-relaxed font-sans font-medium">
+            When you customize thumbnails or categories, those changes are stored locally in your current browser's private <strong class="text-orange-400">Local Storage</strong>. To make them show up permanently for <strong class="text-white">everyone on your main live website</strong>, we need to save them into the central <code class="bg-slate-950 px-1 py-0.5 rounded text-[11px] font-mono border border-slate-800 text-slate-300">src/games.json</code> file.
+          </p>
+
+          <div class="bg-slate-950 border border-slate-850 rounded-2xl p-4 flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-mono font-bold text-slate-450 uppercase tracking-widest">games.json content</span>
+              <button id="copy-sync-json-btn" class="px-2.5 py-1 text-[10px] bg-slate-800 hover:bg-slate-700 text-slate-200 rounded font-mono font-bold transition-all cursor-pointer">
+                Copy JSON
+              </button>
+            </div>
+            <textarea id="sync-json-textarea" readonly class="w-full h-32 bg-slate-900 border border-slate-850 rounded-xl p-3 text-xs font-mono text-emerald-450 focus:outline-none resize-none no-scrollbar"></textarea>
+          </div>
+
+          <div class="flex items-start gap-2 bg-orange-500/10 border border-orange-500/20 p-3 rounded-xl text-[11px] text-orange-200 leading-relaxed">
+            <svg class="w-4 h-4 text-orange-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
+            <p><strong>Instructions:</strong> Click <strong class="text-white">Copy JSON</strong>, then paste it in the AI Chat on the left side with a message like: <em class="text-orange-300 italic">"Save this updated games.json content"</em>. I will commit it for you!</p>
+          </div>
+
+          <div class="flex justify-end border-t border-slate-800 pt-4 mt-1">
+            <button id="sync-close-cancel-btn" class="px-4 py-2.5 text-xs font-bold uppercase font-mono text-slate-350 bg-slate-800 hover:bg-slate-750 rounded-xl transition-colors cursor-pointer">Close</button>
+          </div>
+        </div>
 
       </div>
     </div>
