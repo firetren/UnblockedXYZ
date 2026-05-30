@@ -755,7 +755,7 @@
             else{s.classList.add("hidden");dot.style.background="#00ff88";dot.style.boxShadow="0 0 8px #00ff88";txt.textContent="SITE ONLINE";txt.style.color="#00cc66";}
             document.body.style.visibility='visible';
           });
-        }catch(e){console.warn("Admin error",e);}
+        }catch(e){console.warn("Admin error",e);document.body.style.visibility='visible';}
       }
       bootAdmin();
     </script>
