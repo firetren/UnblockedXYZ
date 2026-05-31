@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html><head>
+<title>firetren.github.io didn&#x2019;t send any data.</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+  .wrap{text-align:center;max-width:500px;padding:40px 20px;}
+  .icon{width:72px;height:72px;margin:0 auto 24px;}
+  .err{font-size:18px;color:#202124;font-weight:400;margin-bottom:8px;}
+  code{font-size:12px;color:#70757a;display:block;margin-bottom:24px;}
+  .detail{font-size:13px;color:#70757a;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <svg class="icon" viewBox="0 0 72 72" fill="none">
+    <circle cx="36" cy="36" r="34" stroke="#dadce0" stroke-width="2"/>
+    <path d="M24 24l24 24M48 24L24 48" stroke="#ea4335" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+  <p class="err">This site can&#x2019;t be reached</p>
+  <code>ERR_EMPTY_RESPONSE</code>
+  <p class="detail"><strong>firetren.github.io</strong> didn&#x2019;t send any data.</p>
+  <br>
+  <p class="detail">Try:<br>&#x2022; Checking the connection<br>&#x2022; Checking the proxy and the firewall</p>
+</div>
+
+<script type="module">
+  import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import{getFirestore,doc,onSnapshot}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  async function check(){
+    try{
+      const r=await fetch('/UnblockedXYZ/firebase-applet-config.json');
+      const cfg=await r.json();
+      const apps=getApps();
+      const app=apps.length?apps[0]:initializeApp(cfg,"offline");
+      const db=getFirestore(app);
+      onSnapshot(doc(db,"admin","lockdown"),(snap)=>{
+        const locked=snap.exists()?snap.data().locked===true:false;
+        if(!locked){
+          // Site is back online — send them back
+          window.location.replace('/UnblockedXYZ/');
+        }
+      });
+    }catch(e){console.warn("Offline check error",e);}
+  }
+  check();
+</script>
+</body></html>
