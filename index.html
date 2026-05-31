@@ -739,17 +739,22 @@
           onSnapshot(ref,(snap)=>{
             const locked=snap.exists()?snap.data().locked===true:false;
             window._adminLocked=locked;
-            const s=document.getElementById("lockdown-screen");
             const dot=document.getElementById("admin-status-dot");
             const txt=document.getElementById("admin-status-text");
             if(locked){
-              window.location.replace('/UnblockedXYZ/offline.html');
               dot.style.background="#ff4400";dot.style.boxShadow="0 0 8px #ff4400";txt.textContent="SITE OFFLINE";txt.style.color="#ff6644";
+              window.location.replace('/UnblockedXYZ/offline.html');
+            } else {
+              const s=document.getElementById("lockdown-screen");
+              if(s)s.classList.add("hidden");
+              dot.style.background="#00ff88";dot.style.boxShadow="0 0 8px #00ff88";txt.textContent="SITE ONLINE";txt.style.color="#00cc66";
+              document.body.style.visibility='visible';
             }
-            else{s.classList.add("hidden");dot.style.background="#00ff88";dot.style.boxShadow="0 0 8px #00ff88";txt.textContent="SITE ONLINE";txt.style.color="#00cc66";}
-            document.body.style.visibility='visible';
           });
-        }catch(e){console.warn("Admin error",e);}
+        }catch(e){
+          console.warn("Admin error",e);
+          document.body.style.visibility='visible';
+        }
       }
       bootAdmin();
     </script>
