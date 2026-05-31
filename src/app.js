@@ -26,6 +26,11 @@ function cleanGameUrl(url) {
   if (!url) return '';
   let clean = url.trim();
 
+  // Route any Rodha mathplayground relative references directly to the stable CrazyGames player
+  if (clean.includes('rodha-new-3') || clean === 'rodha') {
+    return 'https://www.crazygames.com/embed/rodha';
+  }
+
   // If the user pasted an iframe HTML tag, extract the src attribute
   if (clean.includes('<iframe') && clean.includes('src=')) {
     const srcMatch = clean.match(/src="([^"]+)"/) || clean.match(/src='([^']+)'/);
@@ -67,6 +72,15 @@ function cleanGameUrl(url) {
     const embedMatch = clean.match(/crazygames\.com\/embed\/([^/?#&]+)/);
     if (embedMatch && embedMatch[1]) {
       return `https://www.crazygames.com/embed/${embedMatch[1]}`;
+    }
+  }
+
+  // Handle relative game URLs copy-pasted or imported from sister Playgrounds (e.g., mathplayground.com, puzzleplayground.com)
+  if (!clean.startsWith('http://') && !clean.startsWith('https://') && clean.length > 0) {
+    if (clean.startsWith('pp-')) {
+      clean = `https://www.puzzleplayground.com/${clean}`;
+    } else {
+      clean = `https://www.mathplayground.com/${clean}`;
     }
   }
 
@@ -978,13 +992,33 @@ function setupArenaView(game) {
   document.getElementById('arena-game-instructions').textContent = game.instructions || 'Click inside the frame, then use standard mouse controls or keyboard arrows to steer.';
   document.getElementById('arena-game-credits-name').textContent = game.credits || 'Independent Open-Source Developer';
 
+  // Set custom aspect-ratio from game configurations if defined
+  const targetWrap = document.getElementById('play-arena-frame-viewport-wrapper');
+  if (targetWrap) {
+    if (game.aspectRatio) {
+      targetWrap.style.aspectRatio = game.aspectRatio;
+    } else {
+      targetWrap.style.aspectRatio = '';
+    }
+  }
+
   // Adjust progress warning text for Smash Karts vs generic games
   const warningBox = document.getElementById('arena-saves-warning-box');
+  const warningContent = document.getElementById('arena-saves-warning-content');
   if (warningBox) {
-    if (game.id === 'smash-karts') {
-      warningBox.classList.add('hidden');
-    } else {
-      warningBox.classList.remove('hidden');
+    warningBox.classList.remove('hidden');
+    if (warningContent) {
+      if (game.id === 'smash-karts') {
+        warningContent.innerHTML = `
+          <h4 class="font-bold text-sm text-rose-400 mb-0.5">⚠️ Smash Karts Save Warning</h4>
+          <p class="leading-relaxed text-rose-200 font-sans">Your unblockedxyz portal account will <strong>NOT</strong> save your progress. To save your levels, stats, and unlocked customization items, you must register or log in to a personal account directly inside the Smash Karts game client.</p>
+        `;
+      } else {
+        warningContent.innerHTML = `
+          <h4 class="font-bold text-sm text-rose-400 mb-0.5">⚠️ No Account Cloud Saves</h4>
+          <p class="leading-relaxed text-rose-200 font-sans">Because games run in an isolated browser sandbox, <strong>progress, custom levels, and high scores are NOT saved to your account database</strong>. Refreshing or exiting the game resets your session.</p>
+        `;
+      }
     }
   }
 
@@ -1144,14 +1178,14 @@ function setupArenaView(game) {
     theaterBtn.parentNode.replaceChild(newClearBtnHandler(newTheater, () => {
       const arenaGrid = document.getElementById('play-arena-grid-layout');
       if (arenaGrid) {
-        const isTheaterActive = arenaGrid.classList.contains('lg:grid-cols-1');
+        const isTheaterActive = arenaGrid.classList.contains('max-w-full');
         if (isTheaterActive) {
-          arenaGrid.classList.remove('lg:grid-cols-1', 'max-w-full');
-          arenaGrid.classList.add('lg:grid-cols-3', 'max-w-6xl');
+          arenaGrid.classList.remove('max-w-full');
+          arenaGrid.classList.add('max-w-6xl');
           newTheater.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> <span class="hidden md:inline">Theater Grid</span>`;
         } else {
-          arenaGrid.classList.remove('lg:grid-cols-3', 'max-w-6xl');
-          arenaGrid.classList.add('lg:grid-cols-1', 'max-w-full');
+          arenaGrid.classList.remove('max-w-6xl');
+          arenaGrid.classList.add('max-w-full');
           newTheater.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M10 14l-7 7"/></svg> <span class="hidden md:inline">Normal View</span>`;
         }
       }

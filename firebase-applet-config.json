@@ -1,8 +1,10 @@
 {
-  "apiKey": "AIzaSyAW0COQI7ybzG-pls2DefliBygIhnkdREk",
-  "authDomain": "unblocked-xyz.firebaseapp.com",
-  "projectId": "unblocked-xyz",
-  "storageBucket": "unblocked-xyz.firebasestorage.app",
-  "messagingSenderId": "673042157524",
-  "appId": "1:673042157524:web:91b14db74743f88dbf1041"
+  "projectId": "celtic-atrium-jnzsc",
+  "appId": "1:498993288257:web:c4d4c22f2b3822a589a2c0",
+  "apiKey": "AIzaSyBSwLywxDojFuZnRGtKksrz0oNibMxD2iI",
+  "authDomain": "celtic-atrium-jnzsc.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-bfe23208-f928-4df4-99fd-459f1a361b69",
+  "storageBucket": "celtic-atrium-jnzsc.firebasestorage.app",
+  "messagingSenderId": "498993288257",
+  "measurementId": ""
 }
